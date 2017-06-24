@@ -8,11 +8,16 @@
 ; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ;
 ;
-; This component tests CPU and critical IO registers for stuck bits and proper
-; addressing. Also tests the bit set and clear instructions operating on SREG.
+; This component tests:
 ;
-; Preserves interrupt enable status ('I' flag in SREG), but it enables
-; interrupts for brief periods even if they were disabled to test the flag.
+; - CPU and critical IO registers for stuck bits and proper addressing.
+; - Bit set and clear instructions operating on SREG.
+; - The LDI instruction.
+; - The LPM instruction.
+;
+; Critical IO registers are SREG, SPH and SPL.
+;
+; Interrupts are disabled for up to 8 cycle periods during the test.
 ;
 
 .include "xmb_defs.inc"
@@ -48,39 +53,42 @@ xmb_creg_0:
 	; due to the different values, is also likely to catch addressing
 	; flaws or if writes affect each other across registers. A different
 	; checking method is used for the inverse run to reduce the likelihood
-	; of common mode failure.
+	; of common mode failure. Although the lpm instruction uses Z, the
+	; fault of ZH:ZL is highly unlikely to mask register faults.
 
-	lds   r0,      xmb_creg_lowrd_s + 0
-	lds   r1,      xmb_creg_lowrd_s + 1
-	lds   r2,      xmb_creg_lowrd_s + 2
-	lds   r3,      xmb_creg_lowrd_s + 3
-	lds   r4,      xmb_creg_lowrd_s + 4
-	lds   r5,      xmb_creg_lowrd_s + 5
-	lds   r6,      xmb_creg_lowrd_s + 6
-	lds   r7,      xmb_creg_lowrd_s + 7
-	lds   r8,      xmb_creg_lowrd_s + 8
-	lds   r9,      xmb_creg_lowrd_s + 9
-	lds   r10,     xmb_creg_lowrd_s + 10
-	lds   r11,     xmb_creg_lowrd_s + 11
-	lds   r12,     xmb_creg_lowrd_s + 12
-	lds   r13,     xmb_creg_lowrd_s + 13
-	lds   r14,     xmb_creg_lowrd_s + 14
-	lds   r15,     xmb_creg_lowrd_s + 15
-	ldi   r16,     0xAA
-	ldi   r17,     0x55
-	ldi   r18,     0xE1
-	ldi   r19,     0x69
-	ldi   r20,     0x3C
-	ldi   r21,     0x0F
-	ldi   r22,     0x8D
-	ldi   r23,     0xB2
-	ldi   r24,     0x9C
-	ldi   r25,     0xA6
-	ldi   XL,      0x78
-	ldi   XH,      0x66
-	ldi   YL,      0x47
-	ldi   YH,      0x56
-	ldi   ZL,      0x2E
+	ldi   ZL,      lo8(xmb_creg_lowrd_s)
+	ldi   ZH,      hi8(xmb_creg_lowrd_s)
+	lpm   r0,      Z+
+	lpm   r1,      Z+
+	lpm   r2,      Z+
+	lpm   r3,      Z+
+	lpm   r4,      Z+
+	lpm   r5,      Z+
+	lpm   r6,      Z+
+	lpm   r7,      Z+
+	lpm   r8,      Z+
+	lpm   r9,      Z+
+	lpm   r10,     Z+
+	lpm   r11,     Z+
+	lpm   r12,     Z+
+	lpm   r13,     Z+
+	lpm   r14,     Z+
+	lpm   r15,     Z+
+	lpm   r16,     Z+
+	lpm   r17,     Z+
+	lpm   r18,     Z+
+	lpm   r19,     Z+
+	lpm   r20,     Z+
+	lpm   r21,     Z+
+	lpm   r22,     Z+
+	lpm   r23,     Z+
+	lpm   r24,     Z+
+	lpm   r25,     Z+
+	lpm   XL,      Z+
+	lpm   XH,      Z+
+	lpm   YL,      Z+
+	lpm   YH,      Z+
+	lpm   ZL,      Z
 	ldi   ZH,      0xCA
 	eor   r0,      r16
 	brne  xmb_creg_fault_00
@@ -122,22 +130,24 @@ xmb_creg_fault_00:
 
 xmb_creg_inv:
 
-	lds   r0,      xmb_creg_lowrd_i + 0
-	lds   r1,      xmb_creg_lowrd_i + 1
-	lds   r2,      xmb_creg_lowrd_i + 2
-	lds   r3,      xmb_creg_lowrd_i + 3
-	lds   r4,      xmb_creg_lowrd_i + 4
-	lds   r5,      xmb_creg_lowrd_i + 5
-	lds   r6,      xmb_creg_lowrd_i + 6
-	lds   r7,      xmb_creg_lowrd_i + 7
-	lds   r8,      xmb_creg_lowrd_i + 8
-	lds   r9,      xmb_creg_lowrd_i + 9
-	lds   r10,     xmb_creg_lowrd_i + 10
-	lds   r11,     xmb_creg_lowrd_i + 11
-	lds   r12,     xmb_creg_lowrd_i + 12
-	lds   r13,     xmb_creg_lowrd_i + 13
-	lds   r14,     xmb_creg_lowrd_i + 14
-	lds   r15,     xmb_creg_lowrd_i + 15
+	ldi   ZL,      lo8(xmb_creg_lowrd_i)
+	ldi   ZH,      hi8(xmb_creg_lowrd_i)
+	lpm   r0,      Z+
+	lpm   r1,      Z+
+	lpm   r2,      Z+
+	lpm   r3,      Z+
+	lpm   r4,      Z+
+	lpm   r5,      Z+
+	lpm   r6,      Z+
+	lpm   r7,      Z+
+	lpm   r8,      Z+
+	lpm   r9,      Z+
+	lpm   r10,     Z+
+	lpm   r11,     Z+
+	lpm   r12,     Z+
+	lpm   r13,     Z+
+	lpm   r14,     Z+
+	lpm   r15,     Z
 	ldi   r16,     0x55
 	ldi   r17,     0xAA
 	ldi   r18,     0x1E
@@ -152,8 +162,10 @@ xmb_creg_inv:
 	ldi   XH,      0x99
 	ldi   YL,      0xB8
 	ldi   YH,      0xA9
+	ldi   ZL,      lo8(xmb_creg_lowrd_s + 15)
+	ldi   ZH,      hi8(xmb_creg_lowrd_s + 15)
+	lpm   ZH,      Z
 	ldi   ZL,      0xD1
-	ldi   ZH,      0x35
 	sec
 	adc   ZH,      r15
 	brne  xmb_creg_fault_01
@@ -201,38 +213,40 @@ xmb_creg_1:
 	; increase the chance of detecting bits affecting each other in
 	; individual registers.
 
-	ldi   ZH,      0xC5
-	ldi   ZL,      0x8E
-	ldi   YH,      0x2D
-	ldi   YL,      0xD4
-	ldi   XH,      0xB1
-	ldi   XL,      0x39
-	ldi   r25,     0xE4
-	ldi   r24,     0x59
-	ldi   r23,     0x74
-	ldi   r22,     0x3A
-	ldi   r21,     0xA5
-	ldi   r20,     0x95
-	ldi   r19,     0x8B
-	ldi   r18,     0x63
-	ldi   r17,     0xC6
-	ldi   r16,     0x72
-	lds   r15,     xmb_creg_lowrd_1s + 15
-	lds   r14,     xmb_creg_lowrd_1s + 14
-	lds   r13,     xmb_creg_lowrd_1s + 13
-	lds   r12,     xmb_creg_lowrd_1s + 12
-	lds   r11,     xmb_creg_lowrd_1s + 11
-	lds   r10,     xmb_creg_lowrd_1s + 10
-	lds   r9,      xmb_creg_lowrd_1s + 9
-	lds   r8,      xmb_creg_lowrd_1s + 8
-	lds   r7,      xmb_creg_lowrd_1s + 7
-	lds   r6,      xmb_creg_lowrd_1s + 6
-	lds   r5,      xmb_creg_lowrd_1s + 5
-	lds   r4,      xmb_creg_lowrd_1s + 4
-	lds   r3,      xmb_creg_lowrd_1s + 3
-	lds   r2,      xmb_creg_lowrd_1s + 2
-	lds   r1,      xmb_creg_lowrd_1s + 1
-	lds   r0,      xmb_creg_lowrd_1s + 0
+	ldi   YH,      0x63
+	ldi   YL,      0x8B
+	ldi   XH,      0x95
+	ldi   XL,      0xA5
+	ldi   r25,     0x3A
+	ldi   r24,     0x74
+	ldi   r23,     0x59
+	ldi   r22,     0xE4
+	ldi   r21,     0x39
+	ldi   r20,     0xB1
+	ldi   r19,     0xD4
+	ldi   r18,     0x2D
+	ldi   r17,     0x8E
+	ldi   r16,     0xC5
+	ldi   ZL,      lo8(xmb_creg_lowrd_1s)
+	ldi   ZH,      hi8(xmb_creg_lowrd_1s)
+	lpm   r15,     Z+
+	lpm   r14,     Z+
+	lpm   r13,     Z+
+	lpm   r12,     Z+
+	lpm   r11,     Z+
+	lpm   r10,     Z+
+	lpm   r9,      Z+
+	lpm   r8,      Z+
+	lpm   r7,      Z+
+	lpm   r6,      Z+
+	lpm   r5,      Z+
+	lpm   r4,      Z+
+	lpm   r3,      Z+
+	lpm   r2,      Z+
+	lpm   r1,      Z+
+	lpm   r0,      Z
+	ldi   ZH,      0x72
+	ldi   ZL,      0xC6
 	eor   r15,     r16
 	brne  xmb_creg_fault_02
 	eor   r14,     r17
@@ -273,38 +287,40 @@ xmb_creg_fault_02:
 
 xmb_creg_1inv:
 
-	ldi   ZH,      0x3A
-	ldi   ZL,      0x71
-	ldi   YH,      0xD2
-	ldi   YL,      0x2B
-	ldi   XH,      0x4E
-	ldi   XL,      0xC6
-	ldi   r25,     0x1B
-	ldi   r24,     0xA6
-	ldi   r23,     0x8B
-	ldi   r22,     0xC5
-	ldi   r21,     0x5A
-	ldi   r20,     0x6A
-	ldi   r19,     0x74
-	ldi   r18,     0x9C
-	ldi   r17,     0x39
-	ldi   r16,     0x8D
-	lds   r15,     xmb_creg_lowrd_1i + 15
-	lds   r14,     xmb_creg_lowrd_1i + 14
-	lds   r13,     xmb_creg_lowrd_1i + 13
-	lds   r12,     xmb_creg_lowrd_1i + 12
-	lds   r11,     xmb_creg_lowrd_1i + 11
-	lds   r10,     xmb_creg_lowrd_1i + 10
-	lds   r9,      xmb_creg_lowrd_1i + 9
-	lds   r8,      xmb_creg_lowrd_1i + 8
-	lds   r7,      xmb_creg_lowrd_1i + 7
-	lds   r6,      xmb_creg_lowrd_1i + 6
-	lds   r5,      xmb_creg_lowrd_1i + 5
-	lds   r4,      xmb_creg_lowrd_1i + 4
-	lds   r3,      xmb_creg_lowrd_1i + 3
-	lds   r2,      xmb_creg_lowrd_1i + 2
-	lds   r1,      xmb_creg_lowrd_1i + 1
-	lds   r0,      xmb_creg_lowrd_1i + 0
+	ldi   ZL,      lo8(xmb_creg_lowrd_1i)
+	ldi   ZH,      hi8(xmb_creg_lowrd_1i)
+	lpm   r15,     Z+
+	lpm   r14,     Z+
+	lpm   r13,     Z+
+	lpm   r12,     Z+
+	lpm   r11,     Z+
+	lpm   r10,     Z+
+	lpm   r9,      Z+
+	lpm   r8,      Z+
+	lpm   r7,      Z+
+	lpm   r6,      Z+
+	lpm   r5,      Z+
+	lpm   r4,      Z+
+	lpm   r3,      Z+
+	lpm   r2,      Z+
+	lpm   r1,      Z+
+	lpm   r0,      Z
+	ldi   ZH,      0x8D
+	ldi   ZL,      0x39
+	ldi   YH,      0x9C
+	ldi   YL,      0x74
+	ldi   XH,      0x6A
+	ldi   XL,      0x5A
+	ldi   r25,     0xC5
+	ldi   r24,     0x8B
+	ldi   r23,     0xA6
+	ldi   r22,     0x1B
+	ldi   r21,     0xC6
+	ldi   r20,     0x4E
+	ldi   r19,     0x2B
+	ldi   r18,     0xD2
+	ldi   r17,     0x71
+	ldi   r16,     0x3A
 	sec
 	adc   ZH,      r0
 	brne  xmb_creg_fault_03
@@ -361,7 +377,7 @@ xmb_creg_ext:
 	cpi   r17,     0xFF
 	brne  xmb_creg_fault_04
 	com   r17
-	out   SREG,    r17
+	out   SREG,    r17    ; Interrupts disabled
 	in    r16,     SREG
 	cpi   r16,     0x00
 	breq  xmb_creg_sr1
@@ -376,15 +392,15 @@ xmb_creg_sr1:
 
 	sen
 	in    r16,     SREG
+	sei                   ; Interrupts enabled
 	cpi   r16,     0x04   ; ithsvNzc
+	brne  xmb_creg_fault_05
+	in    r16,     SREG
+	cpi   r16,     0x84   ; IthsvNzc
 	brne  xmb_creg_fault_05
 	ses
 	in    r16,     SREG
 	cpi   r16,     0x14   ; ithSvNzc
-	brne  xmb_creg_fault_05
-	sei
-	in    r16,     SREG
-	cpi   r16,     0x94   ; IthSvNzc
 	brne  xmb_creg_fault_05
 	sez
 	in    r16,     SREG
@@ -410,32 +426,33 @@ xmb_creg_sr1:
 	in    r16,     SREG
 	cpi   r16,     0xE3   ; ITHsvnZC
 	brne  xmb_creg_fault_05
-	cli
+	clh
 	in    r16,     SREG
-	cpi   r16,     0x63   ; iTHsvnZC
+	cpi   r16,     0xC3   ; IThsvnZC
 	brne  xmb_creg_fault_05
 	sev
 	in    r16,     SREG
-	cpi   r16,     0x6B   ; iTHsVnZC
-	brne  xmb_creg_fault_05
-	clh
-	in    r16,     SREG
-	cpi   r16,     0x4B   ; iThsVnZC
+	cpi   r16,     0xCB   ; IThsVnZC
 	brne  xmb_creg_fault_05
 	clz
 	in    r16,     SREG
-	cpi   r16,     0x49   ; iThsVnzC
+	cpi   r16,     0xC9   ; IThsVnzC
 	brne  xmb_creg_fault_05
 	clc
 	in    r16,     SREG
-	cpi   r16,     0x48   ; iThsVnzc
+	cpi   r16,     0xC8   ; IThsVnzc
 	brne  xmb_creg_fault_05
 	clt
+	in    r16,     SREG
+	cpi   r16,     0x88   ; IthsVnzc
+	brne  xmb_creg_fault_05
+	cli                   ; Interrupts disabled
 	in    r16,     SREG
 	cpi   r16,     0x08   ; ithsVnzc
 	brne  xmb_creg_fault_05
 	clv
 	in    r16,     SREG
+	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
 	cpi   r16,     0x00   ; ithsvnzc
 	breq  xmb_creg_sr2
 
@@ -447,22 +464,22 @@ xmb_creg_fault_05:
 
 xmb_creg_sr2:
 
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	; Stack pointer. High bits beyond the internal RAM of the AVR may not
+	; be implemented, so mask those.
 
-	; Stack pointer. Interrupts are disabled during the tests. High bits
-	; beyond the internal RAM of the AVR may not be implemented, so mask
-	; those.
-
-	cli
 	in    r2,      SPL
 	in    r3,      SPH    ; Save current stack pointer
 
 	ldi   r16,     0xFF
 	ldi   r17,     0x00
+	cli                   ; Interrupts disabled
 	out   SPL,     r16
 	out   SPH,     r17
 	in    r16,     SPH
 	in    r17,     SPL
+	out   SPL,     r2     ; Restore saved stack pointer
+	out   SPH,     r3
+	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
 	cpi   r16,     0x00
 	brne  xmb_creg_fault_06
 	cpi   r17,     0xFF
@@ -470,10 +487,14 @@ xmb_creg_sr2:
 
 	ldi   r16,     0xAA
 	ldi   r17,     0x55
+	cli
 	out   SPL,     r16
 	out   SPH,     r17
 	in    r16,     SPH
 	in    r17,     SPL
+	out   SPL,     r2     ; Restore saved stack pointer
+	out   SPH,     r3
+	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -521,10 +542,14 @@ xmb_creg_sr2:
 
 	ldi   r16,     0x00
 	ldi   r17,     0xFF
+	cli
 	out   SPL,     r16
 	out   SPH,     r17
 	in    r16,     SPH
 	in    r17,     SPL
+	out   SPL,     r2     ; Restore saved stack pointer
+	out   SPH,     r3
+	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -572,10 +597,14 @@ xmb_creg_sr2:
 
 	ldi   r16,     0x55
 	ldi   r17,     0xAA
+	cli
 	out   SPL,     r16
 	out   SPH,     r17
 	in    r16,     SPH
 	in    r17,     SPL
+	out   SPL,     r2     ; Restore saved stack pointer
+	out   SPH,     r3
+	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -622,18 +651,11 @@ xmb_creg_sr2:
 	breq  xmb_creg_sp
 
 xmb_creg_fault_06:
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
 	ldi   r24,     0x06
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
 xmb_creg_sp:
-
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
 
 	; Set up execution chain for next element & Return
 
