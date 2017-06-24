@@ -81,8 +81,6 @@ xmb_run:
 	ldd   r18,     Z + 2
 	ldd   r19,     Z + 3
 	ldi   r20,     0x00
-	std   Z + 0,   r20
-	std   Z + 1,   r20
 	std   Z + 2,   r20
 	std   Z + 3,   r20
 

@@ -33,13 +33,26 @@
 .global xmb_creg
 xmb_creg:
 
-	; Test execution chain
+	; Partial set up & Test execution chain
 
+	ldi   r20,     ((xmb_reg_chain      ) & 0xFF) ^ ((xmb_reg_chain_from      ) & 0xFF)
+	eor   r20,     r16
+	std   Z + 0,   r20
+	ldi   r20,     ((xmb_reg_chain >>  8) & 0xFF) ^ ((xmb_reg_chain_from >>  8) & 0xFF)
+	eor   r20,     r17
+	std   Z + 1,   r20
 	subi  r16,     (xmb_reg_chain_from      ) & 0xFF
 	sbci  r17,     (xmb_reg_chain_from >>  8) & 0xFF
 	sbci  r18,     (xmb_reg_chain_from >> 16) & 0xFF
 	sbci  r19,     (xmb_reg_chain_from >> 24) & 0xFF
-	breq  xmb_creg_0
+	brne  xmb_creg_fault_ff
+	brcs  xmb_creg_fault_ff
+	subi  r16,     1       ; This has a good chance to detect if either
+	sbci  r17,     0       ; the Z flag malfunctions or subi is not
+	sbci  r18,     0       ; capable to operate correctly (the C flag has
+	sbci  r19,     0       ; to change state).
+	brcc  xmb_creg_fault_ff
+	brcs  xmb_creg_0
 
 xmb_creg_fault_ff:
 	ldi   r24,     0xFF
@@ -657,10 +670,8 @@ xmb_creg_fault_06:
 
 xmb_creg_sp:
 
-	; Set up execution chain for next element & Return
+	; Set up part of execution chain for next element & Return
 
-	ldi   r16,     (xmb_reg_chain      ) & 0xFF
-	ldi   r17,     (xmb_reg_chain >>  8) & 0xFF
 	ldi   r18,     (xmb_reg_chain >> 16) & 0xFF
 	ldi   r19,     (xmb_reg_chain >> 24) & 0xFF
 	jmp   xmb_glob_tail_next

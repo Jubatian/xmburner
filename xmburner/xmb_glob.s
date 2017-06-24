@@ -49,8 +49,6 @@ xmb_glob_tail_next:
 xmb_glob_tail_chain:
 	ldi   ZL,      lo8(xmb_glob_chain)
 	ldi   ZH,      hi8(xmb_glob_chain)
-	std   Z + 0,   r16
-	std   Z + 1,   r17
 	std   Z + 2,   r18
 	std   Z + 3,   r19
 xmb_glob_tail:
