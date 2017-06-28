@@ -23,12 +23,17 @@
 include xmb_defs.mk
 
 
-# Targets
+# Targets. For now add a dummy target indicating all built.
 
-all: $(XMB_COMPONENTS)
+all: $(XMB_OBJ)/dummy
 clean:
+	rm    -f $(XMB_OBJ)/dummy
 	rm    -f $(XMB_OBJ)/*.o
 	rm -d -f $(XMB_OBJ)
+
+
+$(XMB_OBJ)/dummy: $(XMB_COMPONENTS)
+	touch $(XMB_OBJ)/dummy
 
 
 # XMBurner rules
