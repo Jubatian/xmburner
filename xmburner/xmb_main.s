@@ -14,15 +14,6 @@
 .section .text
 
 
-;
-; Default failure handler.
-;
-.global xmb_fault_def
-xmb_fault_def:
-	rjmp  .-2
-	jmp   0
-
-
 
 ;
 ; Initialize.

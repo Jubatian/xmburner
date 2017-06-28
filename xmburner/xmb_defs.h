@@ -21,5 +21,5 @@
 */
 
 #ifndef XMB_FAULT
-#define XMB_FAULT xmb_fault_def
+#define XMB_FAULT xmb_fault
 #endif
