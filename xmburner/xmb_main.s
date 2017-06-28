@@ -8,7 +8,7 @@
 ; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ;
 
-.include "xmb_defs.inc"
+#include "xmb_defs.h"
 
 
 .section .text
@@ -99,7 +99,7 @@ xmb_run:
 ; The 0x00 padding is a nop slide, even if the "ijmp" above fails, the first
 ; test will be started.
 ;
-.balign 9, 0x00
+.balign 512, 0x00
 xmb_test_table:
 
 	jmp   xmb_creg

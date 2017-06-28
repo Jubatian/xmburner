@@ -20,14 +20,18 @@
 ; Interrupts are disabled for up to 8 cycle periods during the test.
 ;
 
-.include "xmb_defs.inc"
+#include "xmb_defs.h"
 
 
 .section .text
 
 
-.set xmb_creg_chain_from 0xE0D43BA5
-.set xmb_creg_chain      0xE0D43BA5
+.set exec_id_from, 0xE0D43BA5
+.set exec_id,      0xE0D43BA5
+
+.set SR_IO,  _SFR_IO_ADDR(SREG)
+.set SPL_IO, _SFR_IO_ADDR(SPL)
+.set SPH_IO, _SFR_IO_ADDR(SPH)
 
 
 .global xmb_creg
@@ -35,16 +39,16 @@ xmb_creg:
 
 	; Partial set up & Test execution chain
 
-	ldi   r20,     ((xmb_reg_chain      ) & 0xFF) ^ ((xmb_reg_chain_from      ) & 0xFF)
+	ldi   r20,     ((exec_id      ) & 0xFF) ^ ((exec_id_from      ) & 0xFF)
 	eor   r20,     r16
 	std   Z + 0,   r20
-	ldi   r20,     ((xmb_reg_chain >>  8) & 0xFF) ^ ((xmb_reg_chain_from >>  8) & 0xFF)
+	ldi   r20,     ((exec_id >>  8) & 0xFF) ^ ((exec_id_from >>  8) & 0xFF)
 	eor   r20,     r17
 	std   Z + 1,   r20
-	subi  r16,     (xmb_reg_chain_from      ) & 0xFF
-	sbci  r17,     (xmb_reg_chain_from >>  8) & 0xFF
-	sbci  r18,     (xmb_reg_chain_from >> 16) & 0xFF
-	sbci  r19,     (xmb_reg_chain_from >> 24) & 0xFF
+	subi  r16,     (exec_id_from      ) & 0xFF
+	sbci  r17,     (exec_id_from >>  8) & 0xFF
+	sbci  r18,     (exec_id_from >> 16) & 0xFF
+	sbci  r19,     (exec_id_from >> 24) & 0xFF
 	brne  xmb_creg_fault_ff
 	brcs  xmb_creg_fault_ff
 	subi  r16,     1       ; This has a good chance to detect if either
@@ -381,22 +385,22 @@ xmb_creg_ext:
 	; Status Register. Also test bit clear and set instructions affecting
 	; this register.
 
-	in    r0,      SREG    ; Store original value ('I' flag)
+	in    r0,      SR_IO   ; Store original value ('I' flag)
 
 	ldi   r16,     0xFF
 	ldi   r17,     0x00
-	out   SREG,    r16
-	in    r17,     SREG
+	out   SR_IO,    r16
+	in    r17,     SR_IO
 	cpi   r17,     0xFF
 	brne  xmb_creg_fault_04
 	com   r17
-	out   SREG,    r17    ; Interrupts disabled
-	in    r16,     SREG
+	out   SR_IO,   r17    ; Interrupts disabled
+	in    r16,     SR_IO
 	cpi   r16,     0x00
 	breq  xmb_creg_sr1
 
 xmb_creg_fault_04:
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	ldi   r24,     0x04
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
@@ -404,73 +408,73 @@ xmb_creg_fault_04:
 xmb_creg_sr1:
 
 	sen
-	in    r16,     SREG
+	in    r16,     SR_IO
 	sei                   ; Interrupts enabled
 	cpi   r16,     0x04   ; ithsvNzc
 	brne  xmb_creg_fault_05
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0x84   ; IthsvNzc
 	brne  xmb_creg_fault_05
 	ses
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0x14   ; ithSvNzc
 	brne  xmb_creg_fault_05
 	sez
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0x96   ; IthSvNZc
 	brne  xmb_creg_fault_05
 	seh
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xB6   ; ItHSvNZc
 	brne  xmb_creg_fault_05
 	cls
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xA6   ; ItHsvNZc
 	brne  xmb_creg_fault_05
 	sec
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xA7   ; ItHsvNZC
 	brne  xmb_creg_fault_05
 	cln
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xA3   ; ItHsvnZC
 	brne  xmb_creg_fault_05
 	set
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xE3   ; ITHsvnZC
 	brne  xmb_creg_fault_05
 	clh
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xC3   ; IThsvnZC
 	brne  xmb_creg_fault_05
 	sev
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xCB   ; IThsVnZC
 	brne  xmb_creg_fault_05
 	clz
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xC9   ; IThsVnzC
 	brne  xmb_creg_fault_05
 	clc
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0xC8   ; IThsVnzc
 	brne  xmb_creg_fault_05
 	clt
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0x88   ; IthsVnzc
 	brne  xmb_creg_fault_05
 	cli                   ; Interrupts disabled
-	in    r16,     SREG
+	in    r16,     SR_IO
 	cpi   r16,     0x08   ; ithsVnzc
 	brne  xmb_creg_fault_05
 	clv
-	in    r16,     SREG
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	in    r16,     SR_IO
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	cpi   r16,     0x00   ; ithsvnzc
 	breq  xmb_creg_sr2
 
 xmb_creg_fault_05:
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	ldi   r24,     0x05
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
@@ -480,19 +484,19 @@ xmb_creg_sr2:
 	; Stack pointer. High bits beyond the internal RAM of the AVR may not
 	; be implemented, so mask those.
 
-	in    r2,      SPL
-	in    r3,      SPH    ; Save current stack pointer
+	in    r2,      SPL_IO
+	in    r3,      SPH_IO ; Save current stack pointer
 
 	ldi   r16,     0xFF
 	ldi   r17,     0x00
 	cli                   ; Interrupts disabled
-	out   SPL,     r16
-	out   SPH,     r17
-	in    r16,     SPH
-	in    r17,     SPL
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SPL_IO,  r16
+	out   SPH_IO,  r17
+	in    r16,     SPH_IO
+	in    r17,     SPL_IO
+	out   SPL_IO,  r2     ; Restore saved stack pointer
+	out   SPH_IO,  r3
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	cpi   r16,     0x00
 	brne  xmb_creg_fault_06
 	cpi   r17,     0xFF
@@ -501,13 +505,13 @@ xmb_creg_sr2:
 	ldi   r16,     0xAA
 	ldi   r17,     0x55
 	cli
-	out   SPL,     r16
-	out   SPH,     r17
-	in    r16,     SPH
-	in    r17,     SPL
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SPL_IO,  r16
+	out   SPH_IO,  r17
+	in    r16,     SPH_IO
+	in    r17,     SPL_IO
+	out   SPL_IO,  r2     ; Restore saved stack pointer
+	out   SPH_IO,  r3
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -556,13 +560,13 @@ xmb_creg_sr2:
 	ldi   r16,     0x00
 	ldi   r17,     0xFF
 	cli
-	out   SPL,     r16
-	out   SPH,     r17
-	in    r16,     SPH
-	in    r17,     SPL
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SPL_IO,  r16
+	out   SPH_IO,  r17
+	in    r16,     SPH_IO
+	in    r17,     SPL_IO
+	out   SPL_IO,  r2     ; Restore saved stack pointer
+	out   SPH_IO,  r3
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -611,13 +615,13 @@ xmb_creg_sr2:
 	ldi   r16,     0x55
 	ldi   r17,     0xAA
 	cli
-	out   SPL,     r16
-	out   SPH,     r17
-	in    r16,     SPH
-	in    r17,     SPL
-	out   SPL,     r2     ; Restore saved stack pointer
-	out   SPH,     r3
-	out   SREG,    r0     ; Restore saved SREG with whatever 'I' flag it had
+	out   SPL_IO,  r16
+	out   SPH_IO,  r17
+	in    r16,     SPH_IO
+	in    r17,     SPL_IO
+	out   SPL_IO,  r2     ; Restore saved stack pointer
+	out   SPH_IO,  r3
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
@@ -672,8 +676,8 @@ xmb_creg_sp:
 
 	; Set up part of execution chain for next element & Return
 
-	ldi   r18,     (xmb_reg_chain >> 16) & 0xFF
-	ldi   r19,     (xmb_reg_chain >> 24) & 0xFF
+	ldi   r18,     (exec_id >> 16) & 0xFF
+	ldi   r19,     (exec_id >> 24) & 0xFF
 	jmp   xmb_glob_tail_next
 
 

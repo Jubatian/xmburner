@@ -8,7 +8,7 @@
 ; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ;
 
-.include "xmb_defs.inc"
+#include "xmb_defs.h"
 
 
 .section .data
