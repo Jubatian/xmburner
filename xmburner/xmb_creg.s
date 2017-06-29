@@ -39,6 +39,8 @@ xmb_creg:
 
 	; Partial set up & Test execution chain
 
+	ldi   ZL,      lo8(xmb_glob_chain)
+	ldi   ZH,      hi8(xmb_glob_chain)
 	ldi   r20,     ((exec_id      ) & 0xFF) ^ ((exec_id_from      ) & 0xFF)
 	eor   r20,     r16
 	std   Z + 0,   r20
