@@ -108,36 +108,52 @@ xmb_creg_0:
 	lpm   ZL,      Z
 	ldi   ZH,      0xCA
 	eor   r0,      r16
+	com   r0
 	brne  xmb_creg_fault_00
 	eor   r1,      r17
+	com   r1
 	brne  xmb_creg_fault_00
 	eor   r2,      r18
+	com   r2
 	brne  xmb_creg_fault_00
 	eor   r3,      r19
+	com   r3
 	brne  xmb_creg_fault_00
 	eor   r4,      r20
+	com   r4
 	brne  xmb_creg_fault_00
 	eor   r5,      r21
+	com   r5
 	brne  xmb_creg_fault_00
 	eor   r6,      r22
+	com   r6
 	brne  xmb_creg_fault_00
 	eor   r7,      r23
+	com   r7
 	brne  xmb_creg_fault_00
 	eor   r8,      r24
+	com   r8
 	brne  xmb_creg_fault_00
 	eor   r9,      r25
+	com   r9
 	brne  xmb_creg_fault_00
 	eor   r10,     XL
+	com   r10
 	brne  xmb_creg_fault_00
 	eor   r11,     XH
+	com   r11
 	brne  xmb_creg_fault_00
 	eor   r12,     YL
+	com   r12
 	brne  xmb_creg_fault_00
 	eor   r13,     YH
+	com   r13
 	brne  xmb_creg_fault_00
 	eor   r14,     ZL
+	com   r14
 	brne  xmb_creg_fault_00
 	eor   r15,     ZH
+	com   r15
 	breq  xmb_creg_inv
 
 xmb_creg_fault_00:
@@ -264,37 +280,53 @@ xmb_creg_1:
 	lpm   r0,      Z
 	ldi   ZH,      0x72
 	ldi   ZL,      0xC6
-	eor   r15,     r16
+	eor   r16,     r15
+	com   r16
 	brne  xmb_creg_fault_02
-	eor   r14,     r17
+	eor   r17,     r14
+	com   r17
 	brne  xmb_creg_fault_02
-	eor   r13,     r18
+	eor   r18,     r13
+	com   r18
 	brne  xmb_creg_fault_02
-	eor   r12,     r19
+	eor   r19,     r12
+	com   r19
 	brne  xmb_creg_fault_02
-	eor   r11,     r20
+	eor   r20,     r11
+	com   r20
 	brne  xmb_creg_fault_02
-	eor   r10,     r21
+	eor   r21,     r10
+	com   r21
 	brne  xmb_creg_fault_02
-	eor   r9,      r22
+	eor   r22,     r9
+	com   r22
 	brne  xmb_creg_fault_02
-	eor   r8,      r23
+	eor   r23,     r8
+	com   r23
 	brne  xmb_creg_fault_02
-	eor   r7,      r24
+	eor   r24,     r7
+	com   r24
 	brne  xmb_creg_fault_02
-	eor   r6,      r25
+	eor   r25,     r6
+	com   r25
 	brne  xmb_creg_fault_02
-	eor   r5,      XL
+	eor   XL,      r5
+	com   XL
 	brne  xmb_creg_fault_02
-	eor   r4,      XH
+	eor   XH,      r4
+	com   XH
 	brne  xmb_creg_fault_02
-	eor   r3,      YL
+	eor   YL,      r3
+	com   YL
 	brne  xmb_creg_fault_02
-	eor   r2,      YH
+	eor   YH,      r2
+	com   YH
 	brne  xmb_creg_fault_02
-	eor   r1,      ZL
+	eor   ZL,      r1
+	com   ZL
 	brne  xmb_creg_fault_02
-	eor   r0,      ZH
+	eor   ZH,      r0
+	com   ZH
 	breq  xmb_creg_1inv
 
 xmb_creg_fault_02:
@@ -339,37 +371,37 @@ xmb_creg_1inv:
 	ldi   r17,     0x71
 	ldi   r16,     0x3A
 	sec
-	adc   ZH,      r0
+	adc   r0,      ZH
 	brne  xmb_creg_fault_03
-	adc   ZL,      r1
+	adc   r1,      ZL
 	brne  xmb_creg_fault_03
-	adc   YH,      r2
+	adc   r2,      YH
 	brne  xmb_creg_fault_03
-	adc   YL,      r3
+	adc   r3,      YL
 	brne  xmb_creg_fault_03
-	adc   XH,      r4
+	adc   r4,      XH
 	brne  xmb_creg_fault_03
-	adc   XL,      r5
+	adc   r5,      XL
 	brne  xmb_creg_fault_03
-	adc   r25,     r6
+	adc   r6,      r25
 	brne  xmb_creg_fault_03
-	adc   r24,     r7
+	adc   r7,      r24
 	brne  xmb_creg_fault_03
-	adc   r23,     r8
+	adc   r8,      r23
 	brne  xmb_creg_fault_03
-	adc   r22,     r9
+	adc   r9,      r22
 	brne  xmb_creg_fault_03
-	adc   r21,     r10
+	adc   r10,     r21
 	brne  xmb_creg_fault_03
-	adc   r20,     r11
+	adc   r11,     r20
 	brne  xmb_creg_fault_03
-	adc   r19,     r12
+	adc   r12,     r19
 	brne  xmb_creg_fault_03
-	adc   r18,     r13
+	adc   r13,     r18
 	brne  xmb_creg_fault_03
-	adc   r17,     r14
+	adc   r14,     r17
 	brne  xmb_creg_fault_03
-	adc   r16,     r15
+	adc   r15,     r16
 	breq  xmb_creg_ext
 
 xmb_creg_fault_03:
