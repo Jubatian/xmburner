@@ -14,6 +14,7 @@
 ; - Bit set and clear instructions operating on SREG.
 ; - The LDI instruction.
 ; - The LPM instruction.
+; - Diverse parameter combinations on EOR, COM, ADC and CPSE instructions.
 ;
 ; Critical IO registers are SREG, SPH and SPL.
 ;
