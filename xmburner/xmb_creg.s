@@ -59,14 +59,14 @@ xmb_creg:
 	sbci  r18,     0       ; capable to operate correctly (the C flag has
 	sbci  r19,     0       ; to change state).
 	brcc  xmb_creg_fault_ff
-	brcs  xmb_creg_0
+	brcs  xmb_creg_cr0
 
 xmb_creg_fault_ff:
 	ldi   r24,     0xFF
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
-xmb_creg_0:
+xmb_creg_cr0:
 
 	; CPU register test: Load every register with different values, then
 	; do the inverse. This catches individual bits stuck set or clear, and
@@ -234,14 +234,14 @@ xmb_creg_inv:
 	adc   r17,     r1
 	brne  xmb_creg_fault_01
 	adc   r16,     r0
-	breq  xmb_creg_1
+	breq  xmb_creg_cr1
 
 xmb_creg_fault_01:
 	ldi   r24,     0x01
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
-xmb_creg_1:
+xmb_creg_cr1:
 
 	; A second pass of a similar test with different bit patterns and
 	; register comparison pairings. The patterns are selected to be
@@ -405,14 +405,14 @@ xmb_creg_1inv:
 	adc   r14,     r17
 	brne  xmb_creg_fault_03
 	adc   r15,     r16
-	breq  xmb_creg_ext
+	breq  xmb_creg_sreg
 
 xmb_creg_fault_03:
 	ldi   r24,     0x03
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
-xmb_creg_ext:
+xmb_creg_sreg:
 
 	; Tests of important IO registers. Now assume the CPU registers
 	; behave correctly, so things can be saved to them and restored.
@@ -523,7 +523,7 @@ xmb_creg_sr1:
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	cpse  r19,     r1     ; ithsvnzc
 	rjmp  xmb_creg_fault_05
-	rjmp  xmb_creg_sr2
+	rjmp  xmb_creg_sp
 
 xmb_creg_fault_05:
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
@@ -531,7 +531,7 @@ xmb_creg_fault_05:
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
-xmb_creg_sr2:
+xmb_creg_sp:
 
 	; Stack pointer. High bits beyond the internal RAM of the AVR may not
 	; be implemented, so mask those.
@@ -717,14 +717,14 @@ xmb_creg_sr2:
 .endif
 	brne  xmb_creg_fault_06
 	cpi   r17,     0x55
-	breq  xmb_creg_sp
+	breq  xmb_creg_spe
 
 xmb_creg_fault_06:
 	ldi   r24,     0x06
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
 
-xmb_creg_sp:
+xmb_creg_spe:
 
 	; Set up part of execution chain for next element & Return
 
@@ -749,3 +749,13 @@ xmb_creg_lowrd_1s:
 xmb_creg_lowrd_1i:
 	.byte 0xC5, 0x8E, 0x2D, 0xD4, 0xB1, 0x39, 0xE4, 0x59
 	.byte 0x74, 0x3A, 0xA5, 0x95, 0x8B, 0x63, 0xC6, 0x72
+
+
+
+;
+; Test entry points
+;
+.global xmb_creg_cr0
+.global xmb_creg_cr1
+.global xmb_creg_sreg
+.global xmb_creg_sp
