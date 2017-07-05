@@ -462,18 +462,90 @@ xmb_creg_sreg:
 	; Status Register. Also test bit clear and set instructions affecting
 	; this register.
 
-	in    r0,      SR_IO   ; Store original value ('I' flag)
-
-	ldi   r16,     0xFF
+	in    r0,      SR_IO  ; Store original value ('I' flag)
 	ldi   r17,     0x00
-	out   SR_IO,   r16
-	in    r17,     SR_IO
-	cpse  r17,     r16
-	rjmp  xmb_creg_fault_04
-	com   r17
 	out   SR_IO,   r17    ; Interrupts disabled
-	in    r16,     SR_IO
-	cpse  r16,     r17
+
+	sen
+	in    r15,     SR_IO
+	sei                   ; Interrupts enabled
+	ldi   r18,     0x04
+	cpse  r15,     r18    ; ithsvNzc
+	rjmp  xmb_creg_fault_04
+	in    r14,     SR_IO
+	ldi   r19,     0x84
+	cpse  r14,     r19    ; IthsvNzc
+	rjmp  xmb_creg_fault_04
+	ses
+	in    r13,     SR_IO
+	ldi   r20,     0x94
+	cpse  r20,     r13    ; IthSvNzc
+	rjmp  xmb_creg_fault_04
+	sez
+	in    r12,     SR_IO
+	ldi   r21,     0x96
+	cpse  r21,     r12    ; IthSvNZc
+	rjmp  xmb_creg_fault_04
+	seh
+	in    r11,     SR_IO
+	ldi   r22,     0xB6
+	cpse  r11,     r22    ; ItHSvNZc
+	rjmp  xmb_creg_fault_04
+	cls
+	in    r10,     SR_IO
+	ldi   r23,     0xA6
+	cpse  r23,     r10    ; ItHsvNZc
+	rjmp  xmb_creg_fault_04
+	sec
+	in    r9,      SR_IO
+	ldi   r24,     0xA7
+	cpse  r9,      r24    ; ItHsvNZC
+	rjmp  xmb_creg_fault_04
+	cln
+	in    r8,      SR_IO
+	ldi   r25,     0xA3
+	cpse  r25,     r8     ; ItHsvnZC
+	rjmp  xmb_creg_fault_04
+	set
+	in    r7,      SR_IO
+	ldi   XL,      0xE3
+	cpse  XL,      r7     ; ITHsvnZC
+	rjmp  xmb_creg_fault_04
+	clh
+	in    r6,      SR_IO
+	ldi   XH,      0xC3
+	cpse  r6,      XH     ; IThsvnZC
+	rjmp  xmb_creg_fault_04
+	sev
+	in    r5,      SR_IO
+	ldi   YL,      0xCB
+	cpse  r5,      YL     ; IThsVnZC
+	rjmp  xmb_creg_fault_04
+	clz
+	in    r4,      SR_IO
+	ldi   YH,      0xC9
+	cpse  YH,      r4     ; IThsVnzC
+	rjmp  xmb_creg_fault_04
+	clc
+	in    r3,      SR_IO
+	ldi   ZL,      0xC8
+	cpse  r3,      ZL     ; IThsVnzc
+	rjmp  xmb_creg_fault_04
+	clt
+	in    r2,      SR_IO
+	ldi   ZH,      0x88
+	cpse  ZH,      r2     ; IthsVnzc
+	rjmp  xmb_creg_fault_04
+	ldi   r18,     0x08
+	ldi   r19,     0x00
+	cli                   ; Interrupts disabled
+	in    r1,      SR_IO
+	cpse  r18,     r1     ; ithsVnzc
+	rjmp  xmb_creg_fault_04
+	clv
+	in    r1,      SR_IO
+	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
+	cpse  r19,     r1     ; ithsvnzc
 	rjmp  xmb_creg_fault_04
 	rjmp  xmb_creg_sr1
 
@@ -484,87 +556,19 @@ xmb_creg_fault_04:
 	jmp   XMB_FAULT
 
 xmb_creg_sr1:
-	sen
-	in    r15,     SR_IO
-	sei                   ; Interrupts enabled
-	ldi   r18,     0x04
-	cpse  r15,     r18    ; ithsvNzc
+
+	ldi   r16,     0xFF
+	ldi   r17,     0x00
+	out   SR_IO,   r16
+	in    r17,     SR_IO
+	cpse  r17,     r16
 	rjmp  xmb_creg_fault_05
-	in    r14,     SR_IO
-	ldi   r19,     0x84
-	cpse  r14,     r19    ; IthsvNzc
+	com   r17
+	out   SR_IO,   r17    ; Interrupts disabled
+	in    r16,     SR_IO
+	cpse  r16,     r17
 	rjmp  xmb_creg_fault_05
-	ses
-	in    r13,     SR_IO
-	ldi   r20,     0x94
-	cpse  r20,     r13    ; IthSvNzc
-	rjmp  xmb_creg_fault_05
-	sez
-	in    r12,     SR_IO
-	ldi   r21,     0x96
-	cpse  r21,     r12    ; IthSvNZc
-	rjmp  xmb_creg_fault_05
-	seh
-	in    r11,     SR_IO
-	ldi   r22,     0xB6
-	cpse  r11,     r22    ; ItHSvNZc
-	rjmp  xmb_creg_fault_05
-	cls
-	in    r10,     SR_IO
-	ldi   r23,     0xA6
-	cpse  r23,     r10    ; ItHsvNZc
-	rjmp  xmb_creg_fault_05
-	sec
-	in    r9,      SR_IO
-	ldi   r24,     0xA7
-	cpse  r9,      r24    ; ItHsvNZC
-	rjmp  xmb_creg_fault_05
-	cln
-	in    r8,      SR_IO
-	ldi   r25,     0xA3
-	cpse  r25,     r8     ; ItHsvnZC
-	rjmp  xmb_creg_fault_05
-	set
-	in    r7,      SR_IO
-	ldi   XL,      0xE3
-	cpse  XL,      r7     ; ITHsvnZC
-	rjmp  xmb_creg_fault_05
-	clh
-	in    r6,      SR_IO
-	ldi   XH,      0xC3
-	cpse  r6,      XH     ; IThsvnZC
-	rjmp  xmb_creg_fault_05
-	sev
-	in    r5,      SR_IO
-	ldi   YL,      0xCB
-	cpse  r5,      YL     ; IThsVnZC
-	rjmp  xmb_creg_fault_05
-	clz
-	in    r4,      SR_IO
-	ldi   YH,      0xC9
-	cpse  YH,      r4     ; IThsVnzC
-	rjmp  xmb_creg_fault_05
-	clc
-	in    r3,      SR_IO
-	ldi   ZL,      0xC8
-	cpse  r3,      ZL     ; IThsVnzc
-	rjmp  xmb_creg_fault_05
-	clt
-	in    r2,      SR_IO
-	ldi   ZH,      0x88
-	cpse  ZH,      r2     ; IthsVnzc
-	rjmp  xmb_creg_fault_05
-	ldi   r18,     0x08
-	ldi   r19,     0x00
-	cli                   ; Interrupts disabled
-	in    r1,      SR_IO
-	cpse  r18,     r1     ; ithsVnzc
-	rjmp  xmb_creg_fault_05
-	clv
-	in    r1,      SR_IO
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
-	cpse  r19,     r1     ; ithsvnzc
-	rjmp  xmb_creg_fault_05
 	rjmp  xmb_creg_sp
 
 xmb_creg_fault_05:
