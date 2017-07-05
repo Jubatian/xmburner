@@ -78,7 +78,7 @@ xmb_creg_cr0:
 	;
 	; Notes on the eor - com combo: The eor may mask a stuck 1 type fault
 	; on its target. The com alone would not uncover it, the role of the
-	; and block checking for zero is verifying whether the registers could
+	; or block checking for zero is verifying whether the registers could
 	; change all its bits from 0xFF to 0x00. Including the xmb_creg_cr1
 	; pass, this test is performed for all registers.
 
@@ -171,37 +171,21 @@ xmb_creg_fault_00:
 	jmp   XMB_FAULT
 
 xmb_creg_ovr:
-	and   r0,      r0
+	or    r0,      r1
 	brne  xmb_creg_fault_00
-	and   r1,      r1
+	or    r2,      r3
 	brne  xmb_creg_fault_00
-	and   r2,      r2
+	or    r4,      r5
 	brne  xmb_creg_fault_00
-	and   r3,      r3
+	or    r6,      r7
 	brne  xmb_creg_fault_00
-	and   r4,      r4
+	or    r8,      r9
 	brne  xmb_creg_fault_00
-	and   r5,      r5
+	or    r10,     r11
 	brne  xmb_creg_fault_00
-	and   r6,      r6
+	or    r12,     r13
 	brne  xmb_creg_fault_00
-	and   r7,      r7
-	brne  xmb_creg_fault_00
-	and   r8,      r8
-	brne  xmb_creg_fault_00
-	and   r9,      r9
-	brne  xmb_creg_fault_00
-	and   r10,     r10
-	brne  xmb_creg_fault_00
-	and   r11,     r11
-	brne  xmb_creg_fault_00
-	and   r12,     r12
-	brne  xmb_creg_fault_00
-	and   r13,     r13
-	brne  xmb_creg_fault_00
-	and   r14,     r14
-	brne  xmb_creg_fault_00
-	and   r15,     r15
+	or    r14,     r15
 	brne  xmb_creg_fault_00
 
 xmb_creg_inv:
@@ -378,37 +362,21 @@ xmb_creg_fault_02:
 	jmp   XMB_FAULT
 
 xmb_creg_1ovr:
-	and   r16,     r16
+	or    r16,     r17
 	brne  xmb_creg_fault_02
-	and   r17,     r17
+	or    r18,     r19
 	brne  xmb_creg_fault_02
-	and   r18,     r18
+	or    r20,     r21
 	brne  xmb_creg_fault_02
-	and   r19,     r19
+	or    r22,     r23
 	brne  xmb_creg_fault_02
-	and   r20,     r20
+	or    r24,     r25
 	brne  xmb_creg_fault_02
-	and   r21,     r21
+	or    XL,      XH
 	brne  xmb_creg_fault_02
-	and   r22,     r22
+	or    YL,      YH
 	brne  xmb_creg_fault_02
-	and   r23,     r23
-	brne  xmb_creg_fault_02
-	and   r24,     r24
-	brne  xmb_creg_fault_02
-	and   r25,     r25
-	brne  xmb_creg_fault_02
-	and   XL,      XL
-	brne  xmb_creg_fault_02
-	and   XH,      XH
-	brne  xmb_creg_fault_02
-	and   YL,      YL
-	brne  xmb_creg_fault_02
-	and   YH,      YH
-	brne  xmb_creg_fault_02
-	and   ZL,      ZL
-	brne  xmb_creg_fault_02
-	and   ZH,      ZH
+	or    ZL,      ZH
 	brne  xmb_creg_fault_02
 
 xmb_creg_1inv:
