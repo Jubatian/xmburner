@@ -75,6 +75,12 @@ xmb_creg_cr0:
 	; checking method is used for the inverse run to reduce the likelihood
 	; of common mode failure. Although the lpm instruction uses Z, the
 	; fault of ZH:ZL is highly unlikely to mask register faults.
+	;
+	; Notes on the eor - com combo: The eor may mask a stuck 1 type fault
+	; on its target. The com alone would not uncover it, the role of the
+	; and block checking for zero is verifying whether the registers could
+	; change all its bits from 0xFF to 0x00. Including the xmb_creg_cr1
+	; pass, this test is performed for all registers.
 
 	ldi   ZL,      lo8(xmb_creg_lowrd_s)
 	ldi   ZH,      hi8(xmb_creg_lowrd_s)
@@ -157,12 +163,46 @@ xmb_creg_cr0:
 	brne  xmb_creg_fault_00
 	eor   r15,     ZH
 	com   r15
-	breq  xmb_creg_inv
+	breq  xmb_creg_ovr
 
 xmb_creg_fault_00:
 	ldi   r24,     0x00
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
+
+xmb_creg_ovr:
+	and   r0,      r0
+	brne  xmb_creg_fault_00
+	and   r1,      r1
+	brne  xmb_creg_fault_00
+	and   r2,      r2
+	brne  xmb_creg_fault_00
+	and   r3,      r3
+	brne  xmb_creg_fault_00
+	and   r4,      r4
+	brne  xmb_creg_fault_00
+	and   r5,      r5
+	brne  xmb_creg_fault_00
+	and   r6,      r6
+	brne  xmb_creg_fault_00
+	and   r7,      r7
+	brne  xmb_creg_fault_00
+	and   r8,      r8
+	brne  xmb_creg_fault_00
+	and   r9,      r9
+	brne  xmb_creg_fault_00
+	and   r10,     r10
+	brne  xmb_creg_fault_00
+	and   r11,     r11
+	brne  xmb_creg_fault_00
+	and   r12,     r12
+	brne  xmb_creg_fault_00
+	and   r13,     r13
+	brne  xmb_creg_fault_00
+	and   r14,     r14
+	brne  xmb_creg_fault_00
+	and   r15,     r15
+	brne  xmb_creg_fault_00
 
 xmb_creg_inv:
 
@@ -330,12 +370,46 @@ xmb_creg_cr1:
 	brne  xmb_creg_fault_02
 	eor   ZH,      r0
 	com   ZH
-	breq  xmb_creg_1inv
+	breq  xmb_creg_1ovr
 
 xmb_creg_fault_02:
 	ldi   r24,     0x02
 	ldi   r25,     0x00
 	jmp   XMB_FAULT
+
+xmb_creg_1ovr:
+	and   r16,     r16
+	brne  xmb_creg_fault_02
+	and   r17,     r17
+	brne  xmb_creg_fault_02
+	and   r18,     r18
+	brne  xmb_creg_fault_02
+	and   r19,     r19
+	brne  xmb_creg_fault_02
+	and   r20,     r20
+	brne  xmb_creg_fault_02
+	and   r21,     r21
+	brne  xmb_creg_fault_02
+	and   r22,     r22
+	brne  xmb_creg_fault_02
+	and   r23,     r23
+	brne  xmb_creg_fault_02
+	and   r24,     r24
+	brne  xmb_creg_fault_02
+	and   r25,     r25
+	brne  xmb_creg_fault_02
+	and   XL,      XL
+	brne  xmb_creg_fault_02
+	and   XH,      XH
+	brne  xmb_creg_fault_02
+	and   YL,      YL
+	brne  xmb_creg_fault_02
+	and   YH,      YH
+	brne  xmb_creg_fault_02
+	and   ZL,      ZL
+	brne  xmb_creg_fault_02
+	and   ZH,      ZH
+	brne  xmb_creg_fault_02
 
 xmb_creg_1inv:
 
