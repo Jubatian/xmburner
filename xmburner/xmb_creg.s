@@ -38,6 +38,10 @@
 .global xmb_creg
 xmb_creg:
 
+	; All XMBurner components receive the previous component's exec_id in
+	; r19:r18:r17:r16, set up by xmb_main.s. No other input parameters are
+	; used.
+
 	; Partial set up & Test execution chain
 
 	ldi   ZL,      lo8(xmb_glob_chain)
@@ -602,7 +606,7 @@ xmb_creg_sp:
 
 	ldi   r16,     0xAA
 	ldi   r17,     0x55
-	cli
+	cli                   ; Interrupts disabled
 	out   SPL_IO,  r16
 	out   SPH_IO,  r17
 	in    r16,     SPH_IO
@@ -657,7 +661,7 @@ xmb_creg_sp:
 
 	ldi   r16,     0x00
 	ldi   r17,     0xFF
-	cli
+	cli                   ; Interrupts disabled
 	out   SPL_IO,  r16
 	out   SPH_IO,  r17
 	in    r16,     SPH_IO
@@ -712,7 +716,7 @@ xmb_creg_sp:
 
 	ldi   r16,     0x55
 	ldi   r17,     0xAA
-	cli
+	cli                   ; Interrupts disabled
 	out   SPL_IO,  r16
 	out   SPH_IO,  r17
 	in    r16,     SPH_IO
