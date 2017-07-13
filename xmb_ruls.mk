@@ -32,3 +32,6 @@ $(XMB_OBJ)/xmb_main.o: xmburner/xmb_main.s xmburner/xmb_defs.h $(XMB_OBJ)
 
 $(XMB_OBJ)/xmb_creg.o: xmburner/xmb_creg.s xmburner/xmb_defs.h $(XMB_OBJ)
 	$(XMB_CC) $(XMB_ASMFLAGS) -c $< -o $@
+
+$(XMB_OBJ)/xmb_cond.o: xmburner/xmb_cond.s xmburner/xmb_defs.h $(XMB_OBJ)
+	$(XMB_CC) $(XMB_ASMFLAGS) -c $< -o $@

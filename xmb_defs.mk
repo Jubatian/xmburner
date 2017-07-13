@@ -39,3 +39,4 @@ XMB_COMPONENTS  = $(XMB_OBJ)/xmb_glob.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_main.o
 
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_creg.o
+XMB_COMPONENTS += $(XMB_OBJ)/xmb_cond.o
