@@ -77,37 +77,70 @@ xmb_cond_fault_ff:
 xmb_cond_brb1:
 
 	; Conditional branch test: Flag bits 1, test BRBS and BRBC
-	; instructions accordingly. The interrupt flag's instructions are not
-	; tested (those are possibly the most useless instructions of the
-	; AVR).
+	; instructions accordingly.
 
-	in    r16,     SR_IO
-	ori   r16,     0x7F    ; Set all bits expect 'I'
-	out   SR_IO,   r16
-	breq  .+2              ; 'Z'
-	rjmp  xmb_cond_fault_00
-	brne  xmb_cond_fault_00
+	in    r0,      SR_IO   ; Original SREG state to restore 'I' flag
+
+	ldi   r16,     0x01    ; 'C' set
+	out   SR_IO,   r16     ; Interrupts disabled
 	brcs  .+2              ; 'C'
 	rjmp  xmb_cond_fault_00
 	brcc  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r17,     0x02    ; 'Z' set
+	out   SR_IO,   r17     ; Interrupts disabled
+	breq  .+2              ; 'Z'
+	rjmp  xmb_cond_fault_00
+	brne  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r18,     0x04    ; 'N' set
+	out   SR_IO,   r18
 	brmi  .+2              ; 'N'
 	rjmp  xmb_cond_fault_00
 	brpl  xmb_cond_fault_00
-	brlt  .+2              ; 'S'
-	rjmp  xmb_cond_fault_00
-	brge  xmb_cond_fault_00
-	brhs  .+2              ; 'H'
-	rjmp  xmb_cond_fault_00
-	brhc  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r19,     0x08    ; 'V' set
+	out   SR_IO,   r19     ; Interrupts disabled
 	brvs  .+2              ; 'V'
 	rjmp  xmb_cond_fault_00
 	brvc  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r20,     0x10    ; 'S' set
+	out   SR_IO,   r20     ; Interrupts disabled
+	brlt  .+2              ; 'S'
+	rjmp  xmb_cond_fault_00
+	brge  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r21,     0x20    ; 'H' set
+	out   SR_IO,   r21     ; Interrupts disabled
+	brhs  .+2              ; 'H'
+	rjmp  xmb_cond_fault_00
+	brhc  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r22,     0x40    ; 'T' set
+	out   SR_IO,   r22     ; Interrupts disabled
 	brts  .+2              ; 'T'
 	rjmp  xmb_cond_fault_00
 	brtc  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r23,     0x80    ; 'I' set
+	out   SR_IO,   r23     ; Interrupts enabled
+	brie  .+2              ; 'I'
+	rjmp  xmb_cond_fault_00
+	brid  xmb_cond_fault_00
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
 	rjmp  xmb_cond_brb0
 
 xmb_cond_fault_00:
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
 	ldi   r24,     0x00
 	ldi   r25,     0x01
 	jmp   XMB_FAULT
@@ -115,37 +148,70 @@ xmb_cond_fault_00:
 xmb_cond_brb0:
 
 	; Conditional branch test: Flag bits 0, test BRBS and BRBC
-	; instructions accordingly. The interrupt flag's instructions are not
-	; tested (those are possibly the most useless instructions of the
-	; AVR).
+	; instructions accordingly.
 
-	in    r16,     SR_IO
-	andi  r16,     0x80    ; Clear all bits expect 'I'
-	out   SR_IO,   r16
-	brne  .+2              ; 'Z'
-	rjmp  xmb_cond_fault_01
-	breq  xmb_cond_fault_01
+	in    r0,      SR_IO   ; Original SREG state to restore 'I' flag
+
+	ldi   r24,     0xFE    ; 'C' clear
+	out   SR_IO,   r24     ; Interrupts enabled
 	brcc  .+2              ; 'C'
 	rjmp  xmb_cond_fault_01
 	brcs  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   r25,     0xFD    ; 'Z' clear
+	out   SR_IO,   r25     ; Interrupts enabled
+	brne  .+2              ; 'Z'
+	rjmp  xmb_cond_fault_01
+	breq  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   XL,      0xFB    ; 'N' clear
+	out   SR_IO,   XL      ; Interrupts enabled
 	brpl  .+2              ; 'N'
 	rjmp  xmb_cond_fault_01
 	brmi  xmb_cond_fault_01
-	brge  .+2              ; 'S'
-	rjmp  xmb_cond_fault_01
-	brlt  xmb_cond_fault_01
-	brhc  .+2              ; 'H'
-	rjmp  xmb_cond_fault_01
-	brhs  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   XH,      0xF7    ; 'V' clear
+	out   SR_IO,   XH      ; Interrupts enabled
 	brvc  .+2              ; 'V'
 	rjmp  xmb_cond_fault_01
 	brvs  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   YL,      0xEF    ; 'S' clear
+	out   SR_IO,   YL      ; Interrupts enabled
+	brge  .+2              ; 'S'
+	rjmp  xmb_cond_fault_01
+	brlt  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   YH,      0xDF    ; 'H' clear
+	out   SR_IO,   YH      ; Interrupts enabled
+	brhc  .+2              ; 'H'
+	rjmp  xmb_cond_fault_01
+	brhs  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   ZL,      0xBF    ; 'T' clear
+	out   SR_IO,   ZL      ; Interrupts enabled
 	brtc  .+2              ; 'T'
 	rjmp  xmb_cond_fault_01
 	brts  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
+	ldi   ZH,      0x7F    ; 'I' clear
+	out   SR_IO,   ZH      ; Interrupts disabled
+	brid  .+2              ; 'I'
+	rjmp  xmb_cond_fault_01
+	brie  xmb_cond_fault_01
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
+
 	rjmp  xmb_cond_sbr1
 
 xmb_cond_fault_01:
+	out   SR_IO,   r0      ; Restore SREG with whatever 'I' it had
 	ldi   r24,     0x01
 	ldi   r25,     0x01
 	jmp   XMB_FAULT
@@ -530,9 +596,6 @@ xmb_cond_end:
 ; Test entry points
 ;
 .global xmb_cond_brb1
-.global xmb_cond_brb0
 .global xmb_cond_sbr1
-.global xmb_cond_sbr0
 .global xmb_cond_sbi1
-.global xmb_cond_sbi0
 .global xmb_cond_cpse
