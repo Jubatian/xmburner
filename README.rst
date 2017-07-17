@@ -51,11 +51,12 @@ Related components
 
 The project relies on two other components:
 
-- XMBurner ALU Emulator: An AVR core emulator forked off from the CUzeBox
-  project which is capable to simulate anomalies of the ALU.
+- XMBurner ALU Emulator: https://github.com/jubatian/xmburner_aluemu
+  An AVR core emulator forked off from the CUzeBox project which is capable to
+  simulate anomalies of the ALU.
 
-- XMBurner Tests: A test set used to verify the capability of XMBurner to
-  detect anomalies.
+- XMBurner Tests: https://github.com/jubatian/xmburner_test
+  A test set used to verify the capability of XMBurner to detect anomalies.
 
 Both of these components are published under GNU General Public License
 version 3. They are not needed for implementing products using XMBurner.
