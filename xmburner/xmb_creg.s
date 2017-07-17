@@ -466,7 +466,7 @@ xmb_creg_sreg:
 	; Status Register. Also test bit clear and set instructions affecting
 	; this register.
 
-	in    r0,      SR_IO  ; Store original value ('I' flag)
+	in    r0,      SR_IO  ; Store original SREG value ('I' flag)
 	ldi   r17,     0x00
 	out   SR_IO,   r17    ; Interrupts disabled
 
@@ -586,6 +586,7 @@ xmb_creg_sp:
 	; Stack pointer. High bits beyond the internal RAM of the AVR may not
 	; be implemented, so mask those.
 
+	in    r0,      SR_IO  ; Store original SREG value ('I' flag)
 	in    r2,      SPL_IO
 	in    r3,      SPH_IO ; Save current stack pointer
 
