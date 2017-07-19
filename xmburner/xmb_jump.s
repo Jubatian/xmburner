@@ -16,6 +16,10 @@
 ; The goal is to verify whether in the typical short range (BRBS / BRBC
 ; instructions' range) the branch targets are calculated properly.
 ;
+; The component should ideally be located in the middle of the flash so it can
+; test the longest carry sequence on the relative jump / branch adder. See
+; notes for XMB_JUMP_SECTION in xmb_defs.h.
+;
 
 #include "xmb_defs.h"
 
