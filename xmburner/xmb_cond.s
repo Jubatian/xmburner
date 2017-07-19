@@ -549,32 +549,57 @@ xmb_cond_fault_05:
 
 xmb_cond_cpse:
 
-	; CPSE instruction test with some operands. Note that several operand
-	; combinations occur in xmb_creg.s.
+	; CPSE instruction test. Note that several operand combinations occur
+	; in xmb_creg.s. Here it is tested whether each individual bit in the
+	; compare logic works (can detect mismatch).
 
-	ldi   r22,     0x45
-	ldi   r23,     0x96
-	movw  r0,      r22
-	mov   r15,     r22
-	mov   r14,     r23
-	cpse  r0,      r1
+	ldi   r16,     0x96
+	ldi   r17,     0x96
+	movw  r0,      r16
+	cpse  r0,      r1      ; Equality test
+	rjmp  xmb_cond_fault_06
+	ldi   r18,     0x69
+	ldi   r19,     0x69
+	cpse  r19,     r18     ; Equality test
+	rjmp  xmb_cond_fault_06
+	ldi   r20,     0x87
+	ldi   r21,     0x86
+	cpse  r20,     r21     ; Inequality on bit 0
 	rjmp  .+2
 	rjmp  xmb_cond_fault_06
-	cpse  r14,     r23
-	rjmp  xmb_cond_fault_06
-	cpse  r1,      r14
-	rjmp  xmb_cond_fault_06
-	cpse  r23,     r15
+	ldi   r22,     0xE1
+	ldi   r23,     0xE3
+	cpse  r23,     r22     ; Inequality on bit 1
 	rjmp  .+2
 	rjmp  xmb_cond_fault_06
-	cpse  r22,     r0
-	rjmp  xmb_cond_fault_06
-	cpse  r15,     r22
-	rjmp  xmb_cond_fault_06
-	cpse  r14,     r0
+	ldi   r24,     0x52
+	ldi   r25,     0x56
+	cpse  r24,     r25     ; Inequality on bit 2
 	rjmp  .+2
 	rjmp  xmb_cond_fault_06
-	cpse  r15,     r1
+	ldi   XL,      0x39
+	ldi   XH,      0x31
+	cpse  XH,      XL      ; Inequality on bit 3
+	rjmp  .+2
+	rjmp  xmb_cond_fault_06
+	ldi   YL,      0x78
+	ldi   YH,      0x68
+	cpse  YL,      YH      ; Inequality on bit 4
+	rjmp  .+2
+	rjmp  xmb_cond_fault_06
+	ldi   ZL,      0x94
+	ldi   ZH,      0xB4
+	cpse  ZH,      ZL      ; Inequality on bit 5
+	rjmp  .+2
+	rjmp  xmb_cond_fault_06
+	ldi   r17,     0xFD
+	ldi   r25,     0xBD
+	cpse  r25,     r17     ; Inequality on bit 6
+	rjmp  .+2
+	rjmp  xmb_cond_fault_06
+	ldi   r18,     0x2C
+	ldi   r22,     0xAC
+	cpse  r18,     r22     ; Inequality on bit 7
 	rjmp  xmb_cond_end
 
 xmb_cond_fault_06:
