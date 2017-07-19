@@ -495,13 +495,63 @@ xmb_jump_fault_04:
 	ldi   r25,     0x02
 	jmp   XMB_FAULT
 
-xmb_jump_rjump2b:
+xmb_jump_skip:
+
+	; Tests skips whether they can properly skip 2 word instructions. On a
+	; sane hardware implementation this probably should never fail as the
+	; instruction fetch & decode stage of the pipeline should produce this
+	; behaviour (which if failed would so much break the CPU that it is
+	; unlikely it ever reaches this point), however this may still be
+	; useful for testing emulators. 1 word instructions are not tested for
+	; unintended 2 word skips (they are commonly used, most easily causing
+	; detected failures elsewhere).
+
+	ldi   r24,     0x5A
+	mov   r25,     r24
+
+	sbrc  r25,     0
+	.word 0x9000           ; LDS r0, <address> opcode
+	rjmp  xmb_jump_fault_05
+	cpse  r24,     r25
+	.word 0x91F0           ; LDS ZH, <address> opcode
+	rjmp  xmb_jump_fault_05
+	sbrs  r24,     1
+	.word 0x9200           ; STS <address>, r0 opcode
+	rjmp  xmb_jump_fault_05
+	cpse  r25,     r24
+	.word 0x93F0           ; STS <address>, ZH opcode
+	rjmp  xmb_jump_fault_05
+	sbrc  r24,     2
+	.word 0x940C           ; JMP <address> opcode
+	rjmp  xmb_jump_fault_05
+	cpse  r24,     r25
+	.word 0x95FD           ; JMP <address> opcode
+	rjmp  xmb_jump_fault_05
+	sbrs  r25,     3
+	.word 0x940E           ; CALL <address> opcode
+	rjmp  xmb_jump_fault_05
+	cpse  r25,     r24
+	.word 0x95FF           ; CALL <address> opcode
+	rjmp  xmb_jump_fault_05
+	rjmp  xmb_jump_end
+
+xmb_jump_fault_05:
+	ldi   r24,     0x05
+	ldi   r25,     0x02
+	jmp   XMB_FAULT
+
+xmb_jump_end:
 
 	; Set up part of execution chain for next element & Return
 
 	ldi   r18,     (exec_id >> 16) & 0xFF
 	ldi   r19,     (exec_id >> 24) & 0xFF
 	jmp   xmb_glob_tail_next
+
+xmb_jump_rjump2b:
+
+	rjmp  xmb_jump_skip    ; Part of crude large range rjmp test
+	ijmp
 
 
 
@@ -510,3 +560,4 @@ xmb_jump_rjump2b:
 ;
 .global xmb_jump_branch
 .global xmb_jump_rjump
+.global xmb_jump_skip
