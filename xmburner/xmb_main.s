@@ -75,7 +75,8 @@ xmb_run:
 	std   Z + 2,   r20
 	std   Z + 3,   r20
 
-	; Select next test to run
+	; Select next test to run (TODO: Support for larger than 64KWords
+	; code)
 
 	ldi   r24,     0xFF
 	ldi   r25,     0xFF    ; Fault code for bad jumps
@@ -94,8 +95,8 @@ xmb_run:
 xmb_test_table:
 
 	jmp   xmb_creg
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
+	jmp   xmb_cond
+	jmp   xmb_jump
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT

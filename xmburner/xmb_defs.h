@@ -23,3 +23,16 @@
 #ifndef XMB_FAULT
 #define XMB_FAULT xmb_fault
 #endif
+
+
+/*
+** Section to place the branch test (xmb_jump) within. Ideally it should be
+** placed in the middle of the flash (middle_address - 64 words) so it can
+** test the longest carry sequence in the relative branch / jump adder (in a
+** 64 KWords flash this would be word address 0x8000 - 64, so relative jumping
+** across this boundary can be tested).
+*/
+
+#ifndef XMB_JUMP_SECTION
+#define XMB_JUMP_SECTION .text
+#endif
