@@ -32,10 +32,6 @@
 ** test the longest carry sequence in the relative branch / jump adder (in a
 ** 64 KWords flash this would be word address 0x8000 - 64, so relative jumping
 ** across this boundary can be tested).
-**
-** It must start in the same 64 KWord region in which the other XMBurner
-** routines are (normally for up to 128 KWords of flash this should not be a
-** problem, for 128 KWords xmb_jump should ideally start at 0x0FFC0).
 */
 
 #ifndef XMB_JUMP_SECTION
