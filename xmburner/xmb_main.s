@@ -75,8 +75,7 @@ xmb_run:
 	std   Z + 2,   r20
 	std   Z + 3,   r20
 
-	; Select next test to run (TODO: Support for larger than 64KWords
-	; code)
+	; Select next test to run
 
 	ldi   r24,     0xFF
 	ldi   r25,     0xFF    ; Fault code for bad jumps
@@ -84,6 +83,10 @@ xmb_run:
 	lsl   ZL
 	andi  ZL,      0xFE
 	ldi   ZH,      hi8(pm(xmb_test_table))
+#ifdef EIND
+	ldi   r20,     hh8(pm(xmb_test_table))
+	out   EIND,    r20
+#endif
 	ijmp
 
 ;

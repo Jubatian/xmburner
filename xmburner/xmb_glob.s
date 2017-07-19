@@ -53,6 +53,9 @@ xmb_glob_tail_chain:
 	std   Z + 3,   r19
 xmb_glob_tail:
 	clr   r1
+#ifdef EIND
+	out   EIND,    r1      ; Required for normal C programs
+#endif
 	pop   r2
 	pop   r3
 	pop   r4

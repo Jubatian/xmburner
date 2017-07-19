@@ -16,8 +16,9 @@
 ** Address of fault routine, jumped to when XMBurner detects a fault. It takes
 ** a single 16 bit parameter in r25:r24 identifying the cause.
 **
-** You may return from this to the caller (at your own risk). This case set r1
-** zero, pop registers r2-r17, YL and YH from stack, and execute a ret.
+** You may return from this to the caller (at your own risk). This case you
+** should jump (!) to the xmb_glob_tail routine. Note that EIND, if available,
+** may not be zero in this fault routine.
 */
 
 #ifndef XMB_FAULT
@@ -31,6 +32,10 @@
 ** test the longest carry sequence in the relative branch / jump adder (in a
 ** 64 KWords flash this would be word address 0x8000 - 64, so relative jumping
 ** across this boundary can be tested).
+**
+** It must start in the same 64 KWord region in which the other XMBurner
+** routines are (normally for up to 128 KWords of flash this should not be a
+** problem, for 128 KWords xmb_jump should ideally start at 0x0FFC0).
 */
 
 #ifndef XMB_JUMP_SECTION
