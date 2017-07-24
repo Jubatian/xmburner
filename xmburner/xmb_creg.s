@@ -14,6 +14,7 @@
 ; - Bit set and clear instructions operating on SREG.
 ; - The LDI instruction.
 ; - The LPM instruction.
+; - The IN and OUT instructions on SREG, SPL and SPH.
 ; - Diverse parameter combinations on EOR, COM, ADC and CPSE instructions.
 ;
 ; Critical IO registers are SREG, SPH and SPL.
@@ -561,16 +562,16 @@ xmb_creg_fault_04:
 
 xmb_creg_sr1:
 
-	ldi   r16,     0xFF
-	ldi   r17,     0x00
-	out   SR_IO,   r16
-	in    r17,     SR_IO
-	cpse  r17,     r16
+	ldi   r19,     0xFF
+	ldi   r24,     0x00
+	out   SR_IO,   r19
+	in    r24,     SR_IO
+	cpse  r24,     r19
 	rjmp  xmb_creg_fault_05
-	com   r17
-	out   SR_IO,   r17    ; Interrupts disabled
-	in    r16,     SR_IO
-	cpse  r16,     r17
+	com   r24
+	out   SR_IO,   r24    ; Interrupts disabled
+	in    r19,     SR_IO
+	cpse  r19,     r24
 	rjmp  xmb_creg_fault_05
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 	rjmp  xmb_creg_sp
@@ -592,62 +593,63 @@ xmb_creg_sp:
 
 	ldi   r16,     0xFF
 	ldi   r17,     0x00
+	movw  r4,      r16
 	cli                   ; Interrupts disabled
-	out   SPL_IO,  r16
-	out   SPH_IO,  r17
-	in    r16,     SPH_IO
-	in    r17,     SPL_IO
+	out   SPL_IO,  r4
+	out   SPH_IO,  r5
+	in    r4,      SPH_IO
+	in    r5,      SPL_IO
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
-	cpi   r16,     0x00
-	brne  xmb_creg_fault_06
-	cpi   r17,     0xFF
-	brne  xmb_creg_fault_06
+	cpse  r5,      r16
+	rjmp  xmb_creg_fault_06
+	cpse  r4,      r17
+	rjmp  xmb_creg_fault_06
 
-	ldi   r16,     0xAA
-	ldi   r17,     0x55
+	ldi   r20,     0xAA
+	ldi   r21,     0x55
 	cli                   ; Interrupts disabled
-	out   SPL_IO,  r16
-	out   SPH_IO,  r17
-	in    r16,     SPH_IO
-	in    r17,     SPL_IO
+	out   SPL_IO,  r20
+	out   SPH_IO,  r21
+	in    r20,     SPH_IO
+	in    r21,     SPL_IO
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
-	andi  r16,     0x00
-	cpi   r16,     0x00
+	andi  r20,     0x00
+	cpi   r20,     0x00
 .else
 .if (RAMEND < 512)
-	andi  r16,     0x01
-	cpi   r16,     0x01
+	andi  r20,     0x01
+	cpi   r20,     0x01
 .else
 .if (RAMEND < 1024)
-	andi  r16,     0x03
-	cpi   r16,     0x01
+	andi  r20,     0x03
+	cpi   r20,     0x01
 .else
 .if (RAMEND < 2048)
-	andi  r16,     0x07
-	cpi   r16,     0x05
+	andi  r20,     0x07
+	cpi   r20,     0x05
 .else
 .if (RAMEND < 4096)
-	andi  r16,     0x0F
-	cpi   r16,     0x05
+	andi  r20,     0x0F
+	cpi   r20,     0x05
 .else
 .if (RAMEND < 8192)
-	andi  r16,     0x1F
-	cpi   r16,     0x15
+	andi  r20,     0x1F
+	cpi   r20,     0x15
 .else
 .if (RAMEND < 16384)
-	andi  r16,     0x3F
-	cpi   r16,     0x15
+	andi  r20,     0x3F
+	cpi   r20,     0x15
 .else
 .if (RAMEND < 32768)
-	andi  r16,     0x7F
-	cpi   r16,     0x55
+	andi  r20,     0x7F
+	cpi   r20,     0x55
 .else
-	cpi   r16,     0x55
+	cpi   r20,     0x55
 .endif
 .endif
 .endif
@@ -657,7 +659,7 @@ xmb_creg_sp:
 .endif
 .endif
 	brne  xmb_creg_fault_06
-	cpi   r17,     0xAA
+	cpi   r21,     0xAA
 	brne  xmb_creg_fault_06
 
 	ldi   r16,     0x00
@@ -715,49 +717,49 @@ xmb_creg_sp:
 	cpi   r17,     0x00
 	brne  xmb_creg_fault_06
 
-	ldi   r16,     0x55
-	ldi   r17,     0xAA
+	ldi   ZL,      0x55
+	ldi   ZH,      0xAA
 	cli                   ; Interrupts disabled
-	out   SPL_IO,  r16
-	out   SPH_IO,  r17
-	in    r16,     SPH_IO
-	in    r17,     SPL_IO
+	out   SPL_IO,  ZL
+	out   SPH_IO,  ZH
+	in    ZL,      SPH_IO
+	in    ZH,      SPL_IO
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
 .if (RAMEND < 256)
-	andi  r16,     0x00
-	cpi   r16,     0x00
+	andi  ZL,      0x00
+	cpi   ZL,      0x00
 .else
 .if (RAMEND < 512)
-	andi  r16,     0x01
-	cpi   r16,     0x00
+	andi  ZL,      0x01
+	cpi   ZL,      0x00
 .else
 .if (RAMEND < 1024)
-	andi  r16,     0x03
-	cpi   r16,     0x02
+	andi  ZL,      0x03
+	cpi   ZL,      0x02
 .else
 .if (RAMEND < 2048)
-	andi  r16,     0x07
-	cpi   r16,     0x02
+	andi  ZL,      0x07
+	cpi   ZL,      0x02
 .else
 .if (RAMEND < 4096)
-	andi  r16,     0x0F
-	cpi   r16,     0x0A
+	andi  ZL,      0x0F
+	cpi   ZL,      0x0A
 .else
 .if (RAMEND < 8192)
-	andi  r16,     0x1F
-	cpi   r16,     0x0A
+	andi  ZL,      0x1F
+	cpi   ZL,      0x0A
 .else
 .if (RAMEND < 16384)
-	andi  r16,     0x3F
-	cpi   r16,     0x2A
+	andi  ZL,      0x3F
+	cpi   ZL,      0x2A
 .else
 .if (RAMEND < 32768)
-	andi  r16,     0x7F
-	cpi   r16,     0x2A
+	andi  ZL,      0x7F
+	cpi   ZL,      0x2A
 .else
-	cpi   r16,     0xAA
+	cpi   ZL,      0xAA
 .endif
 .endif
 .endif
@@ -767,7 +769,7 @@ xmb_creg_sp:
 .endif
 .endif
 	brne  xmb_creg_fault_06
-	cpi   r17,     0x55
+	cpi   ZH,      0x55
 	breq  xmb_creg_spe
 
 xmb_creg_fault_06:
