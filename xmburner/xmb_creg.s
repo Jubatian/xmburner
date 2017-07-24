@@ -617,47 +617,47 @@ xmb_creg_sp:
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
-.if (RAMEND < 256)
+#if (RAMEND <= 256)
 	andi  r20,     0x00
 	cpi   r20,     0x00
-.else
-.if (RAMEND < 512)
+#else
+#if (RAMEND <= 512)
 	andi  r20,     0x01
 	cpi   r20,     0x01
-.else
-.if (RAMEND < 1024)
+#else
+#if (RAMEND <= 1024)
 	andi  r20,     0x03
 	cpi   r20,     0x01
-.else
-.if (RAMEND < 2048)
+#else
+#if (RAMEND <= 2048)
 	andi  r20,     0x07
 	cpi   r20,     0x05
-.else
-.if (RAMEND < 4096)
+#else
+#if (RAMEND <= 4096)
 	andi  r20,     0x0F
 	cpi   r20,     0x05
-.else
-.if (RAMEND < 8192)
+#else
+#if (RAMEND <= 8192)
 	andi  r20,     0x1F
 	cpi   r20,     0x15
-.else
-.if (RAMEND < 16384)
+#else
+#if (RAMEND <= 16384)
 	andi  r20,     0x3F
 	cpi   r20,     0x15
-.else
-.if (RAMEND < 32768)
+#else
+#if (RAMEND <= 32768)
 	andi  r20,     0x7F
 	cpi   r20,     0x55
-.else
+#else
 	cpi   r20,     0x55
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 	brne  xmb_creg_fault_06
 	cpi   r21,     0xAA
 	brne  xmb_creg_fault_06
@@ -672,47 +672,47 @@ xmb_creg_sp:
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
-.if (RAMEND < 256)
+#if (RAMEND <= 256)
 	andi  r16,     0x00
 	cpi   r16,     0x00
-.else
-.if (RAMEND < 512)
+#else
+#if (RAMEND <= 512)
 	andi  r16,     0x01
 	cpi   r16,     0x01
-.else
-.if (RAMEND < 1024)
+#else
+#if (RAMEND <= 1024)
 	andi  r16,     0x03
 	cpi   r16,     0x03
-.else
-.if (RAMEND < 2048)
+#else
+#if (RAMEND <= 2048)
 	andi  r16,     0x07
 	cpi   r16,     0x07
-.else
-.if (RAMEND < 4096)
+#else
+#if (RAMEND <= 4096)
 	andi  r16,     0x0F
 	cpi   r16,     0x0F
-.else
-.if (RAMEND < 8192)
+#else
+#if (RAMEND <= 8192)
 	andi  r16,     0x1F
 	cpi   r16,     0x1F
-.else
-.if (RAMEND < 16384)
+#else
+#if (RAMEND <= 16384)
 	andi  r16,     0x3F
 	cpi   r16,     0x3F
-.else
-.if (RAMEND < 32768)
+#else
+#if (RAMEND <= 32768)
 	andi  r16,     0x7F
 	cpi   r16,     0x7F
-.else
+#else
 	cpi   r16,     0xFF
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 	brne  xmb_creg_fault_06
 	cpi   r17,     0x00
 	brne  xmb_creg_fault_06
@@ -727,47 +727,47 @@ xmb_creg_sp:
 	out   SPL_IO,  r2     ; Restore saved stack pointer
 	out   SPH_IO,  r3
 	out   SR_IO,   r0     ; Restore saved SREG with whatever 'I' flag it had
-.if (RAMEND < 256)
+#if (RAMEND <= 256)
 	andi  ZL,      0x00
 	cpi   ZL,      0x00
-.else
-.if (RAMEND < 512)
+#else
+#if (RAMEND <= 512)
 	andi  ZL,      0x01
 	cpi   ZL,      0x00
-.else
-.if (RAMEND < 1024)
+#else
+#if (RAMEND <= 1024)
 	andi  ZL,      0x03
 	cpi   ZL,      0x02
-.else
-.if (RAMEND < 2048)
+#else
+#if (RAMEND <= 2048)
 	andi  ZL,      0x07
 	cpi   ZL,      0x02
-.else
-.if (RAMEND < 4096)
+#else
+#if (RAMEND <= 4096)
 	andi  ZL,      0x0F
 	cpi   ZL,      0x0A
-.else
-.if (RAMEND < 8192)
+#else
+#if (RAMEND <= 8192)
 	andi  ZL,      0x1F
 	cpi   ZL,      0x0A
-.else
-.if (RAMEND < 16384)
+#else
+#if (RAMEND <= 16384)
 	andi  ZL,      0x3F
 	cpi   ZL,      0x2A
-.else
-.if (RAMEND < 32768)
+#else
+#if (RAMEND <= 32768)
 	andi  ZL,      0x7F
 	cpi   ZL,      0x2A
-.else
+#else
 	cpi   ZL,      0xAA
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
-.endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
 	brne  xmb_creg_fault_06
 	cpi   ZH,      0x55
 	breq  xmb_creg_spe
