@@ -11,7 +11,7 @@
 ; This component tests:
 ;
 ; - Relative branching using BRBC / BRBS instructions.
-; - Relative jumping using the RJMP instruction.
+; - Relative jumping and calling using the RJMP / RCALL instructions.
 ;
 ; The goal is to verify whether in the typical short range (BRBS / BRBC
 ; instructions' range) the branch targets are calculated properly.
@@ -31,6 +31,8 @@
 .set exec_id,      0xA9F105DB
 
 .set SR_IO,  _SFR_IO_ADDR(SREG)
+.set SPL_IO, _SFR_IO_ADDR(SPL)
+.set SPH_IO, _SFR_IO_ADDR(SPH)
 
 
 .global xmb_jump
@@ -71,6 +73,8 @@ xmb_jump_fault_ff:
 xmb_jump_rjump2a:
 
 	rjmp  xmb_jump_rjump2b ; Part of crude large range rjmp test
+	ijmp
+	rcall xmb_jump_rjump2d
 	ijmp
 
 xmb_jump_branch:
@@ -301,76 +305,92 @@ xmb_jump_rjump:
 #endif
 	ldi   YL,      0x80    ; Guard value
 	ldi   XL,      0x80    ; Guard value
+	in    r24,     SPL_IO
+	in    r25,     SPH_IO  ; Stack pointer start value to compare with
 
 	rjmp  .+126            ; 0
 	ijmp
 	inc   YL               ; 2; YL = 0x81
-	rjmp  .+114
+	rcall .+114
 	ijmp
 	inc   YL               ; 4; YL = 0x82
 	rjmp  .+102
 	ijmp
 	inc   YL               ; 6; YL = 0x83
-	rjmp  .+90
+	rcall .+90
 	ijmp
 	inc   YL               ; 8; YL = 0x84
 	rjmp  .+78
 	ijmp
 	inc   YL               ; 10; YL = 0x85
-	rjmp  .+66
+	rcall .+66
 	ijmp
 	inc   YL               ; 12; YL = 0x86
 	rjmp  .+54
 	ijmp
 	inc   YL               ; 14; YL = 0x87
-	rjmp  .+42
+	rcall .+42
 	ijmp
 	inc   YL               ; 16; YL = 0x88
 	rjmp  .+30
 	ijmp
 	inc   YL               ; 18; YL = 0x89
-	rjmp  .+18
+	rcall .+18
 	ijmp
 	inc   YL               ; 20; YL = 0x8A
 	rjmp  .+6
 	ijmp
-	rjmp  xmb_jump_rjump0t
+	rcall xmb_jump_rjump0t
 	ijmp
 	dec   XL               ; 21; XL = 0x75
 	rjmp  .-8
 	ijmp
 	dec   XL               ; 19; XL = 0x76
-	rjmp  .-20
+	rcall .-20
 	ijmp
 	dec   XL               ; 17; XL = 0x77
 	rjmp  .-32
 	ijmp
 	dec   XL               ; 15; XL = 0x78
-	rjmp  .-44
+	rcall .-44
 	ijmp
 	dec   XL               ; 13; XL = 0x79
 	rjmp  .-56
 	ijmp
 	dec   XL               ; 11; XL = 0x7A
-	rjmp  .-68
+	rcall .-68
 	ijmp
 	dec   XL               ; 9; XL = 0x7B
 	rjmp  .-80
 	ijmp
 	dec   XL               ; 7; XL = 0x7C
-	rjmp  .-92
+	rcall .-92
 	ijmp
 	dec   XL               ; 5; XL = 0x7D
 	rjmp  .-104
 	ijmp
 	dec   XL               ; 3; XL = 0x7E
-	rjmp  .-116
+	rcall .-116
 	ijmp
 	dec   XL               ; 1; XL = 0x7F
 	rjmp  .-128
 	ijmp
 
 xmb_jump_rjump0t:
+
+	in    r23,     SPH_IO
+	in    r22,     SPL_IO  ; Get stack pointer after rcall pushes
+	out   SPH_IO,  r25
+	out   SPL_IO,  r24     ; Discard pushes from rcalls
+#if (PROGMEM_SIZE <= (128 * 1024))
+	sbiw  r24,     11 * 2  ; Stack usage corresponding to 11 rcalls
+#else
+	sbiw  r24,     11 * 3  ; Stack usage corresponding to 11 rcalls
+#endif
+	cpse  r24,     r22
+	ijmp
+	cpse  r25,     r23
+	ijmp
 
 	ldi   r16,     0x8A
 	ldi   r17,     0x75
@@ -393,75 +413,91 @@ xmb_jump_rjump1:
 	ldi   r20,     hh8(pm(xmb_jump_fault_03))
 	out   EIND,    r20
 #endif
+	in    r24,     SPL_IO
+	in    r25,     SPH_IO  ; Stack pointer start value to compare with
 
-	rjmp  .+124            ; 0
+	rcall .+124            ; 0
 	ijmp
 	inc   YL               ; 2; YL = 0x8B
 	rjmp  .+112
 	ijmp
 	inc   YL               ; 4; YL = 0x8C
-	rjmp  .+100
+	rcall .+100
 	ijmp
 	inc   YL               ; 6; YL = 0x8D
 	rjmp  .+88
 	ijmp
 	inc   YL               ; 8; YL = 0x8E
-	rjmp  .+76
+	rcall .+76
 	ijmp
 	inc   YL               ; 10; YL = 0x8F
 	rjmp  .+64
 	ijmp
 	inc   YL               ; 12; YL = 0x90
-	rjmp  .+52
+	rcall .+52
 	ijmp
 	inc   YL               ; 14; YL = 0x91
 	rjmp  .+40
 	ijmp
 	inc   YL               ; 16; YL = 0x92
-	rjmp  .+28
+	rcall .+28
 	ijmp
 	inc   YL               ; 18; YL = 0x93
 	rjmp  .+16
 	ijmp
 	inc   YL               ; 20; YL = 0x94
-	rjmp  .+4
+	rcall .+4
 	ijmp
 	rjmp  xmb_jump_rjump1t
 	dec   XL               ; 21; XL = 0x6A
-	rjmp  .-6
+	rcall .-6
 	ijmp
 	dec   XL               ; 19; XL = 0x6B
 	rjmp  .-18
 	ijmp
 	dec   XL               ; 17; XL = 0x6C
-	rjmp  .-30
+	rcall .-30
 	ijmp
 	dec   XL               ; 15; XL = 0x6D
 	rjmp  .-42
 	ijmp
 	dec   XL               ; 13; XL = 0x6E
-	rjmp  .-54
+	rcall .-54
 	ijmp
 	dec   XL               ; 11; XL = 0x6F
 	rjmp  .-66
 	ijmp
 	dec   XL               ; 9; XL = 0x70
-	rjmp  .-78
+	rcall .-78
 	ijmp
 	dec   XL               ; 7; XL = 0x71
 	rjmp  .-90
 	ijmp
 	dec   XL               ; 5; XL = 0x72
-	rjmp  .-102
+	rcall .-102
 	ijmp
 	dec   XL               ; 3; XL = 0x73
 	rjmp  .-114
 	ijmp
 	dec   XL               ; 1; XL = 0x74
-	rjmp  .-126
+	rcall .-126
 	ijmp
 
 xmb_jump_rjump1t:
+
+	in    r23,     SPH_IO
+	in    r22,     SPL_IO  ; Get stack pointer after rcall pushes
+	out   SPH_IO,  r25
+	out   SPL_IO,  r24     ; Discard pushes from rcalls
+#if (PROGMEM_SIZE <= (128 * 1024))
+	sbiw  r24,     12 * 2  ; Stack usage corresponding to 12 rcalls
+#else
+	sbiw  r24,     12 * 3  ; Stack usage corresponding to 12 rcalls
+#endif
+	cpse  r24,     r22
+	ijmp
+	cpse  r25,     r23
+	ijmp
 
 	ldi   r16,     0x94
 	ldi   r17,     0x6A
@@ -486,6 +522,8 @@ xmb_jump_rjump2:
 	ldi   r20,     hh8(pm(xmb_jump_fault_04))
 	out   EIND,    r20
 #endif
+	in    r24,     SPL_IO
+	in    r25,     SPH_IO  ; Stack pointer start value to compare with
 
 	rjmp  xmb_jump_rjump2a
 	ijmp
@@ -494,6 +532,22 @@ xmb_jump_fault_04:
 	ldi   r24,     0x04
 	ldi   r25,     0x02
 	jmp   XMB_FAULT
+
+xmb_jump_rjump2e:
+
+	in    r23,     SPH_IO
+	in    r22,     SPL_IO  ; Get stack pointer after rcall pushes
+	out   SPH_IO,  r25
+	out   SPL_IO,  r24     ; Discard pushes from rcalls
+#if (PROGMEM_SIZE <= (128 * 1024))
+	sbiw  r24,     2 * 2   ; Stack usage corresponding to 2 rcalls
+#else
+	sbiw  r24,     2 * 3   ; Stack usage corresponding to 2 rcalls
+#endif
+	cpse  r24,     r22
+	ijmp
+	cpse  r25,     r23
+	ijmp
 
 xmb_jump_skip:
 
@@ -550,7 +604,9 @@ xmb_jump_end:
 
 xmb_jump_rjump2b:
 
-	rjmp  xmb_jump_skip    ; Part of crude large range rjmp test
+	rcall xmb_jump_rjump2c ; Part of crude large range rjmp test
+	ijmp
+	rjmp  xmb_jump_rjump2e
 	ijmp
 
 
