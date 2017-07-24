@@ -15,6 +15,7 @@
 ; - SBRS and SBRC instructions.
 ; - SBIS and SBIC instructions.
 ; - CPSE instruction.
+; - LDI and OUT instructions with diverse parameter combinations.
 ;
 ; The goal of the tests is to check for each instruction type whether it can
 ; evaulate to both results (branch / skip or not branch / skip) depending on
