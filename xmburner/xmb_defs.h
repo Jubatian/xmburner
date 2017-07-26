@@ -37,3 +37,14 @@
 #ifndef XMB_JUMP_SECTION
 #define XMB_JUMP_SECTION .text
 #endif
+
+
+/*
+** Size of binary for CRC32 checking. This normally should come from the
+** makefile as a parameter passed to the compiler along with the proper
+** preparation of the binary passing it through the crchex tool.
+*/
+
+#ifndef XMB_BSIZE
+#error "XMB_BSIZE has to be defined (do you have it in your Makefile?)"
+#endif
