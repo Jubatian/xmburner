@@ -30,7 +30,8 @@
 
 #include "xmb_defs.h"
 
-.section .text
+
+.section XMB_CODE_SECTION
 
 
 .set exec_id_from, 0xE0D43BA5

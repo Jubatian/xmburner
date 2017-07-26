@@ -40,6 +40,16 @@
 
 
 /*
+** Section to place XMBurner components within. This section should entirely
+** reside in the lower 64 KBytes (as it uses some program memory tables
+** accessed by lpm instructions).
+*/
+
+#ifndef XMB_CODE_SECTION
+#define XMB_CODE_SECTION .text
+
+
+/*
 ** Size of binary for CRC32 checking. This normally should come from the
 ** makefile as a parameter passed to the compiler along with the proper
 ** preparation of the binary passing it through the crchex tool.
