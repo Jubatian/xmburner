@@ -229,6 +229,7 @@ boole hex_read(FILE* fp, hex_line_t* hline)
 */
 void crc_gen_table(auint* crc_table)
 {
+ auint tmp;
  auint rem;
  auint dbt;
  auint bit;
@@ -236,8 +237,9 @@ void crc_gen_table(auint* crc_table)
  for (dbt = 0U; dbt < 256U; dbt++){
   rem = dbt;
   for (bit = 0U; bit < 8U; bit++){
+   tmp = rem;
    rem = rem >> 1;
-   if ((rem & 1U) != 0U){ rem ^= 0xEDB88320UL; } /* CRC32 polynomial */
+   if ((tmp & 1U) != 0U){ rem ^= 0xEDB88320UL; } /* CRC32 polynomial */
   }
   crc_table[dbt] = rem;
  }
