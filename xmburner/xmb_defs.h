@@ -51,14 +51,14 @@
 
 
 /*
-** Size of binary for CRC32 checking. This normally should come from the
-** makefile as a parameter passed to the compiler along with the proper
-** preparation of the binary passing it through the crchex tool.
+** Size of binary for CRC32 checking. This is a 2 or 3 byte Little Endian
+** value in ROM (if the MCU's ROM is 64 KBytes or less, only the first 2 bytes
+** are used, which should be provided in accordance with the location of the
+** CRC. It is provided in this manner so XMBurner components can be compiled
+** independently of the application if necessary. The size includes the CRC,
+** and must be a multiple of 64.
 */
 
 #ifndef XMB_BSIZE
-#error "XMB_BSIZE has to be defined (do you have it in your Makefile?)"
-#endif
-#if ((XMB_BSIZE & 0xFF) != 0)
-#error "XMB_BSIZE must be a multiple of 256!"
+#define XMB_BSIZE xmb_bsize
 #endif

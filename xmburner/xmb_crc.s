@@ -93,6 +93,21 @@ xmb_crc_ccalc:
 	; compare results. This helps testing a few instructions with
 	; real-world use-case.
 
+	; Load binary size
+
+	ldi   ZL,      lo8(XMB_BSIZE)
+	ldi   ZH,      hi8(XMB_BSIZE)
+#if (PROGMEM_SIZE > (64 * 1024))
+	ldi   r20,     hh8(XMB_BSIZE)
+	out   RAMPZ,   r20
+	elpm  r10,     Z+
+	elpm  r11,     Z+
+	elpm  r12,     Z+
+#else
+	lpm   r10,     Z+
+	lpm   r11,     Z+
+#endif
+
 	; Load current program memory pointer
 
 	ldi   XL,      lo8(xmb_crc_pos)
@@ -193,13 +208,13 @@ xmb_crc_dlp:
 #if (PROGMEM_SIZE > (64 * 1024))
 	in    r20,     RAMPZ
 #endif
-	cpi   ZL,      (XMB_BSIZE      ) & 0xFF
-	brne  xmb_crc_nend
-	cpi   ZH,      (XMB_BSIZE >>  8) & 0xFF
-	brne  xmb_crc_nend
+	cpse  ZL,      r10
+	rjmp  xmb_crc_nend
+	cpse  ZH,      r11
+	rjmp  xmb_crc_nend
 #if (PROGMEM_SIZE > (64 * 1024))
-	cpi   r20,     (XMB_BSIZE >> 16) & 0xFF
-	brne  xmb_crc_nend
+	cpse  r20,     r12
+	rjmp  xmb_crc_nend
 #endif
 
 	cpi   r22,     0xFF
@@ -343,10 +358,25 @@ xmb_crc_calc:
 ; Outputs:
 ; r25:r24: 1 if CRC is OK, 0 otherwise.
 ; Clobbers:
-; r0, r1 (zero), r20, r21, r22, r23, r24, r25, X, Z
+; r0, r1 (zero), r18, r19, r20, r21, r22, r23, r24, r25, X, Z
 ;
 .global xmb_crc_isromok
 xmb_crc_isromok:
+
+	; Load binary size
+
+	ldi   ZL,      lo8(XMB_BSIZE)
+	ldi   ZH,      hi8(XMB_BSIZE)
+#if (PROGMEM_SIZE > (64 * 1024))
+	ldi   r20,     hh8(XMB_BSIZE)
+	out   RAMPZ,   r20
+	elpm  r18,     Z+
+	elpm  r19,     Z+
+	elpm  r20,     Z+
+#else
+	lpm   r18,     Z+
+	lpm   r19,     Z+
+#endif
 
 	; Start address (0x000000)
 
@@ -369,35 +399,35 @@ xmb_crc_isromok:
 xmb_crc_isromok_l:
 
 #if (PROGMEM_SIZE > (64 * 1024))
-	elpm  r20,     Z+
+	elpm  r0,      Z+
 #else
-	lpm   r20,     Z+
+	lpm   r0,      Z+
 #endif
 	movw  XL,      ZL
-	eor   r20,     r22     ; ptr = byte ^ (crcval & 0xFF)
-	mul   r20,     r21     ; r21 = 4, entry size in crc_table
+	eor   r0,      r22     ; ptr = byte ^ (crcval & 0xFF)
+	mul   r0,      r21     ; r21 = 4, entry size in crc_table
 	movw  ZL,      r0
 	subi  ZL,      lo8(-(xmb_crc_table))
 	sbci  ZH,      hi8(-(xmb_crc_table))
 	mov   r22,     r23
 	mov   r23,     r24
 	mov   r24,     r25     ; crcval >>= 8
-	lpm   r20,     Z+
-	eor   r22,     r20
-	lpm   r20,     Z+
-	eor   r23,     r20
-	lpm   r20,     Z+
-	eor   r24,     r20
+	lpm   r0,      Z+
+	eor   r22,     r0
+	lpm   r0,      Z+
+	eor   r23,     r0
+	lpm   r0,      Z+
+	eor   r24,     r0
 	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
 	movw  ZL,      XL
-	cpi   ZL,      (XMB_BSIZE      ) & 0xFF
-	brne  xmb_crc_isromok_l
-	cpi   ZH,      (XMB_BSIZE >>  8) & 0xFF
-	brne  xmb_crc_isromok_l
+	cpse  ZL,      r18
+	rjmp  xmb_crc_isromok_l
+	cpse  ZH,      r19
+	rjmp  xmb_crc_isromok_l
 #if (PROGMEM_SIZE > (64 * 1024))
-	in    r20,     RAMPZ
-	cpi   r20,     (XMB_BSIZE >> 16) & 0xFF
-	brne  xmb_crc_isromok_l
+	in    r0,      RAMPZ
+	cpse  r0,      r20
+	rjmp  xmb_crc_isromok_l
 #endif
 
 	clr   r1
@@ -470,10 +500,10 @@ xmb_crc_ram_l:
 	lpm   r20,     Z+
 	eor   r24,     r20
 	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
-	cp    XL,      r18
-	brne  xmb_crc_ram_l
-	cp    XH,      r19
-	brne  xmb_crc_ram_l
+	cpse  XL,      r18
+	rjmp  xmb_crc_ram_l
+	cpse  XH,      r19
+	rjmp  xmb_crc_ram_l
 
 	clr   r1
 

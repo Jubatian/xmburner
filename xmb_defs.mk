@@ -19,12 +19,6 @@ XMB_CC     ?= avr-gcc
 XMB_MCU    ?= atmega644
 XMB_NATCC  ?= gcc
 
-## Total size of binary. This determines the area on which CRC32 is calculated
-## and checked by the xmb_crc.s component (for ATMega644 leaving room for the
-## bootloader 57344 bytes can be used).
-
-XMB_BSIZE  ?= 57344
-
 ## crchex tool name
 
 XMB_CRCHEX ?= crchex
@@ -34,7 +28,6 @@ XMB_CRCHEX ?= crchex
 XMB_CFLAGS  = -mmcu=$(XMB_MCU)
 XMB_CFLAGS += -Wall -gdwarf-2 -std=gnu99 -Os -fsigned-char -ffunction-sections
 XMB_CFLAGS += -fno-toplevel-reorder -fno-tree-switch-conversion
-XMB_CFLAGS += -DXMB_BSIZE=$(XMB_BSIZE)
 
 ## Assembly specific flags
 
