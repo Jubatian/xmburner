@@ -1,2 +1,4 @@
 # _xmb_o_ directory if exists contains objects
 /_xmb_o_
+# _xmb_b_ directory if exists contains binaries
+/_xmb_b_

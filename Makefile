@@ -30,6 +30,8 @@ clean:
 	rm    -f $(XMB_OBJ)/dummy
 	rm    -f $(XMB_OBJ)/*.o
 	rm -d -f $(XMB_OBJ)
+	rm    -f $(XMB_BIN)/$(XMB_CRCHEX)
+	rm -d -f $(XMB_BIN)
 
 
 $(XMB_OBJ)/dummy: $(XMB_COMPONENTS)
