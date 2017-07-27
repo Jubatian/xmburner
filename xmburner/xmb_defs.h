@@ -47,6 +47,7 @@
 
 #ifndef XMB_CODE_SECTION
 #define XMB_CODE_SECTION .text
+#endif
 
 
 /*
@@ -57,4 +58,7 @@
 
 #ifndef XMB_BSIZE
 #error "XMB_BSIZE has to be defined (do you have it in your Makefile?)"
+#endif
+#if ((XMB_BSIZE & 0xFF) != 0)
+#error "XMB_BSIZE must be a multiple of 256!"
 #endif
