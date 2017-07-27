@@ -41,7 +41,7 @@ xmb_crc_pos:
 #endif
 
 
-.section XMB_CODE_SECTION
+.section .text
 
 
 .set exec_id_from, 0xA9F105DB
@@ -332,6 +332,9 @@ xmb_crc_calc:
 	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
 	ret
 
+
+
+.section XMB_RO64_SECTION
 
 
 ;

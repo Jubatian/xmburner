@@ -25,7 +25,7 @@
 #include "xmb_defs.h"
 
 
-.section XMB_CODE_SECTION
+.section .text
 
 
 .set exec_id_from, 0xE0D43BA5
@@ -785,6 +785,9 @@ xmb_creg_spe:
 	ldi   r19,     (exec_id >> 24) & 0xFF
 	jmp   xmb_glob_tail_next
 
+
+
+.section XMB_RO64_SECTION
 
 
 xmb_creg_lowrd_s:

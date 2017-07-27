@@ -40,13 +40,13 @@
 
 
 /*
-** Section to place XMBurner components within. This section should entirely
-** reside in the lower 64 KBytes (as it uses some program memory tables
-** accessed by lpm instructions).
+** Section to place XMBurner ROM data tables within. This section must
+** entirely reside in the lower 64 KBytes as these tables are accessed with
+** LPM instructions.
 */
 
-#ifndef XMB_CODE_SECTION
-#define XMB_CODE_SECTION .text
+#ifndef XMB_RO64_SECTION
+#define XMB_RO64_SECTION .text
 #endif
 
 
