@@ -74,6 +74,9 @@ xmb_jump_rjump2a:
 
 	rjmp  xmb_jump_rjump2b ; Part of crude large range rjmp test
 	ijmp
+
+xmb_jump_rjump2c:
+
 	rcall xmb_jump_rjump2d
 	ijmp
 
@@ -606,6 +609,9 @@ xmb_jump_rjump2b:
 
 	rcall xmb_jump_rjump2c ; Part of crude large range rjmp test
 	ijmp
+
+xmb_jump_rjump2d:
+
 	rjmp  xmb_jump_rjump2e
 	ijmp
 

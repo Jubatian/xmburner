@@ -84,7 +84,7 @@ xmb_crc_fault_ff:
 	ldi   r25,     0x03
 	jmp   XMB_FAULT
 
-xmb_creg_ccalc:
+xmb_crc_ccalc:
 
 	; Calculate CRC for 64 bytes at once, both by table and direct to
 	; compare results. This helps testing a few instructions with
@@ -314,12 +314,12 @@ xmb_crc_init:
 xmb_crc_calc:
 
 	eor   r20,     r22     ; ptr = byte ^ (crcval & 0xFF)
-	mov   ZL,      4
+	ldi   ZL,      4
 	mul   r20,     ZL
 	movw  ZL,      r0
 	clr   r1               ; ptr <<= 2
-	subi  ZL,      lo8(-xmb_crc_table)
-	sbci  ZH,      hi8(-xmb_crc_table)
+	subi  ZL,      lo8(-(xmb_crc_table))
+	sbci  ZH,      hi8(-(xmb_crc_table))
 	mov   r22,     r23
 	mov   r23,     r24
 	mov   r24,     r25     ; crcval >>= 8
