@@ -20,6 +20,9 @@
 ; Provides user accessible functions:
 ;
 ; - uint32_t xmb_crc_calc(uint32_t crcval, uint8_t byte);
+; - boole    xmb_crc_isromok(void);
+; - void     xmb_crc_genram(void* ram, uint16_t len);
+; - boole    xmb_crc_isramok(void* ram, uint16_t len);
 ;
 
 #include "xmb_defs.h"
@@ -331,6 +334,197 @@ xmb_crc_calc:
 	eor   r24,     r20
 	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
 	ret
+
+
+
+;
+; Checks CRC of the entire ROM
+;
+; Outputs:
+; r25:r24: 1 if CRC is OK, 0 otherwise.
+; Clobbers:
+; r0, r1 (zero), r20, r21, r22, r23, r24, r25, X, Z
+;
+.global xmb_crc_isromok
+xmb_crc_isromok:
+
+	; Start address (0x000000)
+
+	ldi   ZL,      0
+	ldi   ZH,      0
+#if (PROGMEM_SIZE > (64 * 1024))
+	out   RAMPZ,   ZH
+#endif
+
+	; Start CRC value (0xFFFFFFFF)
+
+	ldi   r22,     0xFF
+	ldi   r23,     0xFF
+	movw  r24,     r22
+
+	; Prepare & run calculation loop (32 cycles / byte)
+
+	ldi   r21,     4       ; For multiplying by four
+
+xmb_crc_isromok_l:
+
+#if (PROGMEM_SIZE > (64 * 1024))
+	elpm  r20,     Z+
+#else
+	lpm   r20,     Z+
+#endif
+	movw  XL,      ZL
+	eor   r20,     r22     ; ptr = byte ^ (crcval & 0xFF)
+	mul   r20,     r21     ; r21 = 4, entry size in crc_table
+	movw  ZL,      r0
+	subi  ZL,      lo8(-(xmb_crc_table))
+	sbci  ZH,      hi8(-(xmb_crc_table))
+	mov   r22,     r23
+	mov   r23,     r24
+	mov   r24,     r25     ; crcval >>= 8
+	lpm   r20,     Z+
+	eor   r22,     r20
+	lpm   r20,     Z+
+	eor   r23,     r20
+	lpm   r20,     Z+
+	eor   r24,     r20
+	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
+	movw  ZL,      XL
+	cpi   ZL,      (XMB_BSIZE      ) & 0xFF
+	brne  xmb_crc_isromok_l
+	cpi   ZH,      (XMB_BSIZE >>  8) & 0xFF
+	brne  xmb_crc_isromok_l
+#if (PROGMEM_SIZE > (64 * 1024))
+	in    r20,     RAMPZ
+	cpi   r20,     (XMB_BSIZE >> 16) & 0xFF
+	brne  xmb_crc_isromok_l
+#endif
+
+	clr   r1
+
+xmb_crc_isok_tail:
+
+	; Check CRC correctness (must be 0xFFFFFFFF) & done
+
+	subi  r22,     0xFF
+	sbci  r23,     0xFF
+	sbci  r24,     0xFF
+	sbci  r25,     0xFF    ; Z flag set if it was 0xFFFFFFFF
+	ldi   r24,     0
+	ldi   r25,     0
+	brne  .+2
+	ldi   r24,     1       ; Was zero: CRC is correct
+	ret
+
+
+
+;
+; Internal routine for xmb_crc_genram and xmb_crc_isramok
+;
+; Runs CRC calculation.
+;
+; Inputs:
+; r25:r24: Start address to generate for
+; r23:r22: Length of region (CRC is 4 bytes appended to it)
+; Outputs:
+; XH: XL:  At the end of the RAM region
+; r25:r24: CRC value, high
+; r23:r22: CRC value, low
+; Clobbers:
+; r0, r1 (zero), r18, r19, r20, r21, Z
+;
+xmb_crc_ram_calc:
+
+	; Prepare start and end address
+
+	movw  XL,      r24
+	add   r24,     r22
+	adc   r25,     r23
+	movw  r18,     r24
+
+	; Start CRC value (0xFFFFFFFF)
+
+	ldi   r22,     0xFF
+	ldi   r23,     0xFF
+	movw  r24,     r22
+
+	; Prepare & run calculation loop (29 cycles / byte)
+
+	ldi   r21,     4       ; For multiplying by four
+
+xmb_crc_ram_l:
+
+	ld    r20,     X+
+	eor   r20,     r22     ; ptr = byte ^ (crcval & 0xFF)
+	mul   r20,     r21     ; r21 = 4, entry size in crc_table
+	movw  ZL,      r0
+	subi  ZL,      lo8(-(xmb_crc_table))
+	sbci  ZH,      hi8(-(xmb_crc_table))
+	mov   r22,     r23
+	mov   r23,     r24
+	mov   r24,     r25     ; crcval >>= 8
+	lpm   r20,     Z+
+	eor   r22,     r20
+	lpm   r20,     Z+
+	eor   r23,     r20
+	lpm   r20,     Z+
+	eor   r24,     r20
+	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
+	cp    XL,      r18
+	brne  xmb_crc_ram_l
+	cp    XH,      r19
+	brne  xmb_crc_ram_l
+
+	clr   r1
+
+	ret
+
+
+
+;
+; Generates CRC for RAM region
+;
+; Inputs:
+; r25:r24: Start address to generate for
+; r23:r22: Length of region (CRC is 4 bytes appended to it)
+; Clobbers:
+; r0, r1 (zero), r18, r19, r20, r21, r22, r23, r24, r25, X, Z
+;
+.global xmb_crc_genram
+xmb_crc_genram:
+
+	rcall xmb_crc_ram_calc
+
+	; Append CRC negated & done
+
+	com   r22
+	com   r23
+	com   r24
+	com   r25
+	st    X+,      r22
+	st    X+,      r23
+	st    X+,      r24
+	st    X+,      r25
+	ret
+
+
+
+;
+; Checks CRC on RAM region
+;
+; Inputs:
+; r25:r24: Start address to check from
+; r23:r22: Length of region (CRC is on the end of it)
+; Outputs:
+; r25:r24: 1 if CRC is OK, 0 otherwise.
+; Clobbers:
+; r0, r1 (zero), r18, r19, r20, r21, r22, r23, r24, r25, X, Z
+;
+.global xmb_crc_isramok
+xmb_crc_isramok:
+
+	rcall xmb_crc_ram_calc
+	rjmp  xmb_crc_isok_tail
 
 
 
