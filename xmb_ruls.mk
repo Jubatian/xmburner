@@ -28,8 +28,8 @@ $(XMB_BIN):
 
 # Components
 
-$(XMB_OBJ)/%.o: xmburner/%.s xmburner/xmb_defs.h $(XMB_OBJ)
+$(XMB_OBJ)/%.o: xmburner/%.s xmburner/xmb_defs.h | $(XMB_OBJ)
 	$(XMB_CC) $(XMB_ASMFLAGS) -c $< -o $@
 
-$(XMB_BIN)/$(XMB_CRCHEX): xmbtools/crchex.c $(XMB_BIN)
+$(XMB_BIN)/$(XMB_CRCHEX): xmbtools/crchex.c | $(XMB_BIN)
 	$(XMB_NATCC) $(XMB_NATCFS) $< -o $@
