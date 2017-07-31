@@ -186,7 +186,9 @@ xmb_crc_dlp:
 
 	; Table CRC calculation
 
+	movw  r14,     ZL      ; Preserve Z pointer
 	rcall xmb_crc_calc
+	movw  ZL,      r14
 
 	; Compare results (must be same)
 
@@ -217,14 +219,15 @@ xmb_crc_dlp:
 	rjmp  xmb_crc_nend
 #endif
 
-	cpi   r22,     0xFF
+	subi  r22,     0xE3
+	sbci  r23,     0x20
+	sbci  r24,     0xBB
+	sbci  r25,     0xDE    ; CRC32 "magic" number (0xDEBB20E3), result if CRC was good
 	brne  xmb_crc_fault_02
-	cpi   r23,     0xFF
-	brne  xmb_crc_fault_02
-	cpi   r24,     0xFF
-	brne  xmb_crc_fault_02
-	cpi   r25,     0xFF
-	brne  xmb_crc_fault_02
+
+	ldi   r22,     0xFF
+	ldi   r23,     0xFF
+	movw  r24,     r22     ; Restart with 0xFFFFFFFF
 
 	clr   ZL
 	clr   ZH
@@ -434,16 +437,16 @@ xmb_crc_isromok_l:
 
 xmb_crc_isok_tail:
 
-	; Check CRC correctness (must be 0xFFFFFFFF) & done
+	; Check CRC correctness & done
 
-	subi  r22,     0xFF
-	sbci  r23,     0xFF
-	sbci  r24,     0xFF
-	sbci  r25,     0xFF    ; Z flag set if it was 0xFFFFFFFF
+	subi  r22,     0xE3
+	sbci  r23,     0x20
+	sbci  r24,     0xBB
+	sbci  r25,     0xDE    ; CRC32 "magic" number (0xDEBB20E3), result if CRC was good
 	ldi   r24,     0
 	ldi   r25,     0
 	brne  .+2
-	ldi   r24,     1       ; Was zero: CRC is correct
+	ldi   r24,     1       ; Resulted zero: CRC is correct
 	ret
 
 
