@@ -54,3 +54,4 @@ XMB_COMPONENTS += $(XMB_OBJ)/xmb_creg.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_cond.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_jump.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_crc.o
+XMB_COMPONENTS += $(XMB_OBJ)/xmb_ram.o

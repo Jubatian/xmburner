@@ -62,3 +62,13 @@
 #ifndef XMB_BSIZE
 #define XMB_BSIZE xmb_bsize
 #endif
+
+
+/*
+** Only XMega include files have PROGMEM_SIZE defined. For other AVR's, use
+** FLASHEND (which is always defined).
+*/
+
+#ifndef PROGMEM_SIZE
+#define PROGMEM_SIZE (FLASHEND + 1)
+#endif
