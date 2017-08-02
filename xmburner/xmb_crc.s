@@ -204,12 +204,34 @@ xmb_crc_dlp:
 	dec   r16
 	brne  xmb_crc_clp      ; Approx. 10K cycles for the 64 bytes
 
+	; Check increment correctness (whether the increment logic in (E)LPM
+	; is capable to operate properly)
+
+	ldi   XL,      lo8(xmb_crc_pos)
+	ldi   XH,      hi8(xmb_crc_pos)
+	ld    r16,     X+      ; Low
+	ld    r17,     X+      ; High
+#if (PROGMEM_SIZE > (64 * 1024))
+	ld    r18,     X+      ; Extended
+	in    r20,     RAMPZ
+#endif
+	subi  r16,     0xC0    ; Add 64 (0x40)
+	sbci  r17,     0xFF
+#if (PROGMEM_SIZE > (64 * 1024))
+	sbci  r18,     0xFF
+#endif
+	cpse  ZL,      r16
+	rjmp  xmb_crc_fault_03
+	cpse  ZH,      r17
+	rjmp  xmb_crc_fault_03
+#if (PROGMEM_SIZE > (64 * 1024))
+	cpse  r20,     r18
+	rjmp  xmb_crc_fault_03
+#endif
+
 	; If reached end of binary, check CRC value (must be 0xFFFFFFFF), and
 	; reset pointer.
 
-#if (PROGMEM_SIZE > (64 * 1024))
-	in    r20,     RAMPZ
-#endif
 	cpse  ZL,      r10
 	rjmp  xmb_crc_nend
 	cpse  ZH,      r11
@@ -283,6 +305,11 @@ xmb_crc_fault_01:
 
 xmb_crc_fault_02:
 	ldi   r24,     0x02
+	ldi   r25,     0x03
+	jmp   XMB_FAULT
+
+xmb_crc_fault_03:
+	ldi   r24,     0x03
 	ldi   r25,     0x03
 	jmp   XMB_FAULT
 
