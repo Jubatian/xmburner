@@ -109,7 +109,7 @@ xmb_ram_check:
 	rjmp  xmb_ram_fault_00
 	com   r23
 	cpse  ZH,      r23
-	rjmp  xmb_crc_fault_00
+	rjmp  xmb_ram_fault_00
 	ld    YL,      X+      ; ptr1 Low
 	ld    YH,      X+      ; ptr1 High
 	ld    r22,     X+      ; ptr1 Negated Low
@@ -119,7 +119,7 @@ xmb_ram_check:
 	rjmp  xmb_ram_fault_00
 	com   r23
 	cpse  YH,      r23
-	rjmp  xmb_crc_fault_00
+	rjmp  xmb_ram_fault_00
 
 	; Check 16 RAM cell pairs
 

@@ -72,3 +72,13 @@
 #ifndef PROGMEM_SIZE
 #define PROGMEM_SIZE (FLASHEND + 1)
 #endif
+
+
+/*
+** Some headers lack the RAMSIZE definition. For these, calculate it from
+** RAMSTART and RAMEND.
+*/
+
+#ifndef RAMSIZE
+#define RAMSIZE (RAMEND + 1 - RAMSTART)
+#endif
