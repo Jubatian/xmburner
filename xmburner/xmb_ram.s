@@ -233,10 +233,10 @@ xmb_ram_celltest:
 
 	in    r0,      SR_IO   ; Save current SREG with whatever 'I' flag it has
 
-	; Test 0: 0xFF & 0x00
+	; Test 0: 0x55 & 0xAA
 
-	ldi   r18,     0xFF
-	ldi   r19,     0x00
+	ldi   r18,     0x55
+	ldi   r19,     0xAA
 	movw  XL,      YL
 
 	cli                    ; Disable interrupts
