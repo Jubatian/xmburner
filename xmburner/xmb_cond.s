@@ -18,7 +18,7 @@
 ; - LDI and OUT instructions with diverse parameter combinations.
 ;
 ; The goal of the tests is to check for each instruction type whether it can
-; evaulate to both results (branch / skip or not branch / skip) depending on
+; evaluate to both results (branch / skip or not branch / skip) depending on
 ; the condition.
 ;
 ; The SBIS and SBIC instructions are tested using GPIOR0 (which is available
