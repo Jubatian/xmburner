@@ -169,8 +169,8 @@ xmb_ram_clp0e:
 	subi  r24,     lo8(RAMEND + 1)
 	sbci  r25,     hi8(RAMEND + 1)
 	brcs  xmb_ram_clp1e
-	subi  ZL,      lo8(RAMSIZE)
-	sbci  ZH,      hi8(RAMSIZE)
+	subi  YL,      lo8(RAMSIZE)
+	sbci  YH,      hi8(RAMSIZE)
 xmb_ram_clp1e:
 
 	; Loop
@@ -464,8 +464,8 @@ xmb_ram_isramok_l:
 	subi  r22,     lo8(RAMEND + 1)
 	sbci  r23,     hi8(RAMEND + 1)
 	brcs  xmb_ram_isramok_0e
-	subi  ZL,      lo8(RAMSIZE)
-	sbci  ZH,      hi8(RAMSIZE)
+	subi  YL,      lo8(RAMSIZE)
+	sbci  YH,      hi8(RAMSIZE)
 xmb_ram_isramok_0e:
 
 	; Check whether ptr0 (Z) and ptr1 (Y) are equal (Z + 63 is tested
