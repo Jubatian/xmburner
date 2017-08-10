@@ -336,54 +336,48 @@ xmb_ram_celltest:
 
 	; Test 5: Pointer increment
 
-	movw  r22,     YL
-	movw  r20,     ZL
-	inc   r22              ; Compare value
+	movw  r22,     ZL      ; Save
+	movw  ZL,      XL      ; All three pointers the same, point in RAM
+	movw  r20,     XL
+	inc   r20              ; Compare value
 	brne  .+2              ; (Using inc for the least chance of common
-	inc   r23              ; mode failure with the adder of the ptrs)
-	inc   r20
-	brne  .+2
-	inc   r21
+	inc   r21              ; mode failure with the adder of the ptrs)
 	ld    r0,      X+
 	ld    r0,      Y+
 	ld    r0,      Z+
 
-	cpse  r22,     XL
+	cpse  r20,     XL
 	rjmp  xmb_ram_ctf_03
-	cpse  r22,     YL
+	cpse  r20,     YL
 	rjmp  xmb_ram_ctf_03
 	cpse  r20,     ZL
 	rjmp  xmb_ram_ctf_03
-	cpse  r23,     XH
+	cpse  r21,     XH
 	rjmp  xmb_ram_ctf_03
-	cpse  r23,     YH
+	cpse  r21,     YH
 	rjmp  xmb_ram_ctf_03
 	cpse  r21,     ZH
 	rjmp  xmb_ram_ctf_03
 
 	; Test 6: Pointer decrement
 
-	dec   r22              ; Compare value
-	cpi   r22,     0xFF    ; (Using dec for the least chance of common
+	dec   r20              ; Compare value
+	cpi   r20,     0xFF    ; (Using dec for the least chance of common
 	brne  .+2              ; mode failure with the adder of the ptrs)
-	dec   r23
-	dec   r20
-	cpi   r20,     0xFF
-	brne  .+2
 	dec   r21
 	ld    r0,      -X
 	ld    r0,      -Y
 	ld    r0,      -Z
 
-	cpse  r22,     XL
+	cpse  r20,     XL
 	rjmp  xmb_ram_ctf_03
-	cpse  r22,     YL
+	cpse  r20,     YL
 	rjmp  xmb_ram_ctf_03
 	cpse  r20,     ZL
 	rjmp  xmb_ram_ctf_03
-	cpse  r23,     XH
+	cpse  r21,     XH
 	rjmp  xmb_ram_ctf_03
-	cpse  r23,     YH
+	cpse  r21,     YH
 	rjmp  xmb_ram_ctf_03
 	cpse  r21,     ZH
 	rjmp  xmb_ram_ctf_03
@@ -479,17 +473,16 @@ xmb_ram_isramok_0e:
 	cpse  r23,     YH
 	rjmp  xmb_ram_isramok_1e
 	adiw  YL,      61      ; When equal, advance ptr1 with 61
-	movw  r22,     YL
-	subi  r22,     lo8(RAMEND + 1)
-	sbci  r23,     hi8(RAMEND + 1)
+	movw  r18,     YL
+	subi  r18,     lo8(RAMEND + 1)
+	sbci  r19,     hi8(RAMEND + 1)
 	brcs  xmb_ram_isramok_1e
 	subi  YL,      lo8(RAMSIZE)
 	sbci  YH,      hi8(RAMSIZE)
 xmb_ram_isramok_1e:
 
-	; Check end: if Z reached RAM end, then done
+	; Check end: if Z + 63 (in r23:r22) reached RAM end, then done
 
-	movw  r22,     ZL
 	subi  r22,     lo8(RAMEND + 1)
 	sbci  r23,     hi8(RAMEND + 1)
 	brne  xmb_ram_isramok_l
