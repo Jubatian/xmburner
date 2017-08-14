@@ -336,7 +336,7 @@ xmb_ram_celltest:
 
 	; Test 5: Pointer increment
 
-	movw  r22,     ZL      ; Save
+	movw  r22,     ZL      ; Save Z pointer
 	movw  ZL,      XL      ; All three pointers the same, point in RAM
 	movw  r20,     XL
 	inc   r20              ; Compare value
@@ -381,6 +381,7 @@ xmb_ram_celltest:
 	rjmp  xmb_ram_ctf_03
 	cpse  r21,     ZH
 	rjmp  xmb_ram_ctf_03
+	movw  ZL,      r22     ; Restore Z pointer
 
 	ldi   r23,     0x00
 	ret
@@ -392,6 +393,7 @@ xmb_ram_ctf_02:
 	ldi   r23,     0x02
 	ret
 xmb_ram_ctf_03:
+	movw  ZL,      r22     ; Restore Z pointer
 	ldi   r23,     0x03
 	ret
 
