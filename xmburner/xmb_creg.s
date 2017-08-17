@@ -309,7 +309,7 @@ xmb_creg_cr1:
 	lpm   r3,      Z+
 	lpm   r2,      Z+
 	lpm   r1,      Z+
-	lpm   r0,      Z
+	.word 0x9004           ; LPM r0, Z, "common" encoding
 	ldi   ZH,      0x72
 	ldi   ZL,      0xC6
 	eor   r16,     r15
@@ -403,7 +403,7 @@ xmb_creg_1inv:
 	lpm   r3,      Z+
 	lpm   r2,      Z+
 	lpm   r1,      Z+
-	lpm   r0,      Z
+	.word 0x95C8           ; LPM r0, Z, special encoding
 	ldi   ZH,      0x8D
 	ldi   ZL,      0x39
 	ldi   YH,      0x9C

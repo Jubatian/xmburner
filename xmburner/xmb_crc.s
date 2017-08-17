@@ -102,10 +102,10 @@ xmb_crc_ccalc:
 	out   RAMPZ,   r20
 	elpm  r10,     Z+
 	elpm  r11,     Z+
-	elpm  r12,     Z+
+	elpm  r12,     Z
 #else
 	lpm   r10,     Z+
-	lpm   r11,     Z+
+	lpm   r11,     Z
 #endif
 
 	; Load current program memory pointer
@@ -377,7 +377,7 @@ xmb_crc_calc:
 	eor   r23,     r20
 	lpm   r20,     Z+
 	eor   r24,     r20
-	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
+	lpm   r25,     Z       ; crcval ^= xmb_crc_table[ptr]
 	ret
 
 
@@ -402,10 +402,10 @@ xmb_crc_isromok:
 	out   RAMPZ,   r20
 	elpm  r18,     Z+
 	elpm  r19,     Z+
-	elpm  r20,     Z+
+	elpm  r20,     Z
 #else
 	lpm   r18,     Z+
-	lpm   r19,     Z+
+	lpm   r19,     Z
 #endif
 
 	; Start address (0x000000)
@@ -448,7 +448,7 @@ xmb_crc_isromok_l:
 	eor   r23,     r0
 	lpm   r0,      Z+
 	eor   r24,     r0
-	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
+	lpm   r25,     Z       ; crcval ^= xmb_crc_table[ptr]
 	movw  ZL,      XL
 	cpse  ZL,      r18
 	rjmp  xmb_crc_isromok_l
@@ -529,7 +529,7 @@ xmb_crc_ram_l:
 	eor   r23,     r20
 	lpm   r20,     Z+
 	eor   r24,     r20
-	lpm   r25,     Z+      ; crcval ^= xmb_crc_table[ptr]
+	lpm   r25,     Z       ; crcval ^= xmb_crc_table[ptr]
 	cpse  XL,      r18
 	rjmp  xmb_crc_ram_l
 	cpse  XH,      r19
