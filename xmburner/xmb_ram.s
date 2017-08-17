@@ -13,7 +13,8 @@
 ; - RAM memory functionality (Internal SRAM).
 ; - LD and ST instructions with X, Y and Z pointers on whole SRAM.
 ; - LDD and STD instructions with Y and Z pointers + 63 on whole SRAM.
-; - LD with post-increment and pre-decrement with X, Y and Z on whole SRAM.
+; - PUSH and POP instructions on whole SRAM.
+; - LD and ST with post-inc. and pre-dec. with X, Y and Z on whole SRAM.
 ;
 ; Coverage should be sufficienty complete for the LD, ST, LDD and STD
 ; instructions. The displacement variants are tested with the largest
@@ -50,6 +51,8 @@ xmb_ram_ptrs:
 .set exec_id,      0x6B0DE257
 
 .set SR_IO,  _SFR_IO_ADDR(SREG)
+.set SPL_IO, _SFR_IO_ADDR(SPL)
+.set SPH_IO, _SFR_IO_ADDR(SPH)
 
 
 
@@ -219,6 +222,7 @@ xmb_ram_fault_xx:
 ; - 0x01 for cell pair faults
 ; - 0x02 for displacement faults
 ; - 0x03 for pointer increment / decrement faults
+; - 0x04 for push / pop faults
 ; When a fault is produced, Y and Z may also be clobbered.
 ;
 ; Inputs:
@@ -227,7 +231,7 @@ xmb_ram_fault_xx:
 ; Outputs:
 ;     r23: Fault code
 ; Clobbers:
-; r0, r18, r19, r20, r21, r22, X
+; r0, r1 (zero), r18, r19, r20, r21, r22, X
 ;
 xmb_ram_celltest:
 
@@ -334,53 +338,153 @@ xmb_ram_celltest:
 
 	movw  YL,      XL      ; Restore original value
 
-	; Test 5: Pointer increment
+	; Test 5: Pointer predec. store and postinc. load
 
 	movw  r22,     ZL      ; Save Z pointer
+
 	movw  ZL,      XL      ; All three pointers the same, point in RAM
 	movw  r20,     XL
 	inc   r20              ; Compare value
 	brne  .+2              ; (Using inc for the least chance of common
 	inc   r21              ; mode failure with the adder of the ptrs)
-	ld    r0,      X+
-	ld    r0,      Y+
-	ld    r0,      Z+
+	ldi   r18,     0x1E
 
-	cpse  r20,     XL
-	rjmp  xmb_ram_ctf_03
-	cpse  r20,     YL
-	rjmp  xmb_ram_ctf_03
-	cpse  r20,     ZL
-	rjmp  xmb_ram_ctf_03
-	cpse  r21,     XH
-	rjmp  xmb_ram_ctf_03
-	cpse  r21,     YH
-	rjmp  xmb_ram_ctf_03
-	cpse  r21,     ZH
-	rjmp  xmb_ram_ctf_03
+	ld    r1,      X+
+	cli                    ; Disable interrupts
+	ld    r19,     Y       ; Save current contents
+	st    -X,      r18
+	ld    r1,      X+
+	st    Y,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
 
-	; Test 6: Pointer decrement
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  XL,      r20
+	rjmp  xmb_ram_ctf_03
+	cpse  XH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct after operations?
+	sbiw  XL,      1
 
-	dec   r20              ; Compare value
-	cpi   r20,     0xFF    ; (Using dec for the least chance of common
-	brne  .+2              ; mode failure with the adder of the ptrs)
-	dec   r21
-	ld    r0,      -X
-	ld    r0,      -Y
-	ld    r0,      -Z
+	ld    r1,      Y+
+	cli                    ; Disable interrupts
+	ld    r19,     Z       ; Save current contents
+	st    -Y,      r18
+	ld    r1,      Y+
+	st    Z,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
 
-	cpse  r20,     XL
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  YL,      r20
 	rjmp  xmb_ram_ctf_03
-	cpse  r20,     YL
+	cpse  YH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct after operations?
+	sbiw  YL,      1
+
+	ld    r1,      Z+
+	cli                    ; Disable interrupts
+	ld    r19,     X       ; Save current contents
+	st    -Z,      r18
+	ld    r1,      Z+
+	st    X,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
+
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  ZL,      r20
 	rjmp  xmb_ram_ctf_03
-	cpse  r20,     ZL
+	cpse  ZH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct after operations?
+	sbiw  ZL,      1
+
+	; Test 6: Pointer postinc. store and predec load
+
+	ldi   r18,     0xE1
+
+	cli                    ; Disable interrupts
+	ld    r19,     Y       ; Save current contents
+	st    X+,      r18
+	movw  ZL,      XL
+	ld    r1,      -X
+	st    Y,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
+
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  ZL,      r20
 	rjmp  xmb_ram_ctf_03
-	cpse  r21,     XH
+	cpse  ZH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct within operations?
+	sbiw  ZL,      1
+
+	cli                    ; Disable interrupts
+	ld    r19,     Z       ; Save current contents
+	st    Y+,      r18
+	movw  XL,      YL
+	ld    r1,      -Y
+	st    Z,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
+
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  XL,      r20
 	rjmp  xmb_ram_ctf_03
-	cpse  r21,     YH
+	cpse  XH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct within operations?
+	sbiw  XL,      1
+
+	cli                    ; Disable interrupts
+	ld    r19,     X       ; Save current contents
+	st    Z+,      r18
+	movw  YL,      ZL
+	ld    r1,      -Z
+	st    X,       r19     ; Restore contents
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
+
+	cpse  r1,      r18
+	rjmp  xmb_ram_ctf_03   ; Store & Read back success?
+	cpse  YL,      r20
 	rjmp  xmb_ram_ctf_03
-	cpse  r21,     ZH
-	rjmp  xmb_ram_ctf_03
+	cpse  YH,      r21
+	rjmp  xmb_ram_ctf_03   ; Pointer correct within operations?
+	sbiw  YL,      1
+
+	; Test 7: Push & Pop
+
+	ldi   r20,     0xC3
+	ldi   r21,     0x3C
+	in    r18,     SPL_IO
+	in    r19,     SPH_IO
+
+	cli                    ; Disable interrupts
+	out   SPL_IO,  ZL
+	out   SPH_IO,  ZH
+	ld    r1,      Z       ; Save current contents
+	push  r20              ; Post-decrements after store
+	in    XL,      SPL_IO
+	in    XH,      SPH_IO
+	pop   r21              ; Pre-increments before load
+	st    Z,       r1      ; Restore contents
+	in    YL,      SPL_IO
+	in    YH,      SPH_IO
+	out   SPL_IO,  r18
+	out   SPH_IO,  r19
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
+
+	clr   r1
+
+	cpse  r20,     r21
+	rjmp  xmb_ram_ctf_04   ; Store & Read back success?
+	cpse  ZL,      YL
+	rjmp  xmb_ram_ctf_04
+	cpse  ZH,      YH
+	rjmp  xmb_ram_ctf_04   ; Address after pop correct?
+	adiw  XL,      1
+	cpse  XL,      YL
+	rjmp  xmb_ram_ctf_04
+	cpse  XH,      YH
+	rjmp  xmb_ram_ctf_04   ; Address after push correct?
+
 	movw  ZL,      r22     ; Restore Z pointer
 
 	ldi   r23,     0x00
@@ -393,8 +497,13 @@ xmb_ram_ctf_02:
 	ldi   r23,     0x02
 	ret
 xmb_ram_ctf_03:
+	clr   r1
 	movw  ZL,      r22     ; Restore Z pointer
 	ldi   r23,     0x03
+	ret
+xmb_ram_ctf_04:
+	movw  ZL,      r22     ; Restore Z pointer
+	ldi   r23,     0x04
 	ret
 
 
