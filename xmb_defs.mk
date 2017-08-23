@@ -55,3 +55,4 @@ XMB_COMPONENTS += $(XMB_OBJ)/xmb_cond.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_jump.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_crc.o
 XMB_COMPONENTS += $(XMB_OBJ)/xmb_ram.o
+XMB_COMPONENTS += $(XMB_OBJ)/xmb_log.o
