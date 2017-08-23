@@ -197,7 +197,7 @@ xmb_log_test:
 
 	mov   r25,     r6      ; 0xA5 (10100101) &
 	andi  r25,     0x96    ; 0x96 (10010110)
-	cpse  r25,     r13     ; 0x84 (10000100) Result
+	cpse  r25,     r14     ; 0x84 (10000100) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r18     ; Flags must be: IthSvNzc
@@ -302,16 +302,21 @@ xmb_log_test:
 
 	; COM instruction test. Covers all four possible logic combinations
 	; for all bits (0d1s, 0d1s; it is an EOR with 0xFF) and all possible
-	; flag outputs.
+	; flag outputs. COM contrary to EOR sets the C flag, so prepare check
+	; values accordingly.
 
 	out   SR_IO,   r16     ; Set flags: Ithsvnzc
+
+	ldi   r16,     0x81    ; IthsvnzC
+	ldi   r17,     0x83    ; IthsvnZC
+	ldi   r18,     0x95    ; IthSvNzC
 
 	mov   r4,      r1      ; 0xFF (11111111) ^
 	com   r4               ; 0xFF (11111111)
 	cpse  r4,      r0      ; 0x00 (00000000) Result
 	rjmp  xmb_log_fault_03
 	in    r3,      SR_IO
-	cpse  r3,      r17     ; Flags must be: IthsvnZc
+	cpse  r3,      r17     ; Flags must be: IthsvnZC
 	rjmp  xmb_log_fault_03
 
 	mov   r25,     r7      ; 0x5A (01011010) ^
@@ -319,7 +324,7 @@ xmb_log_test:
 	cpse  r25,     r6      ; 0xA5 (10100101) Result
 	rjmp  xmb_log_fault_03
 	in    r3,      SR_IO
-	cpse  r3,      r18     ; Flags must be: IthSvNzc
+	cpse  r3,      r18     ; Flags must be: IthSvNzC
 	rjmp  xmb_log_fault_03
 
 	mov   r5,      r20     ; 0x96 (10010110) ^
@@ -327,7 +332,7 @@ xmb_log_test:
 	cpse  r5,      r21     ; 0x69 (01101001) Result
 	rjmp  xmb_log_fault_03
 	in    r3,      SR_IO
-	cpse  r3,      r16     ; Flags must be: Ithsvnzc
+	cpse  r3,      r16     ; Flags must be: IthsvnzC
 	rjmp  xmb_log_fault_03
 
 	out   SR_IO,   r1      ; Set flags: ITHSVNZC
