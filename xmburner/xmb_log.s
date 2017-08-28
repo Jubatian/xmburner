@@ -101,9 +101,8 @@ xmb_log_test:
 	ldi   r22,     0xE3    ; Flag test: r22: ITHsvnZC
 	ldi   r23,     0xF5    ; Flag test: r23: ITHSvNzC
 
-	; OR & ORI instruction test. Covers all four possible logic
-	; combinations for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible
-	; flag outputs.
+	; OR instruction test. Covers all four possible logic combinations for
+	; all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible flag outputs.
 
 	out   SR_IO,   r16     ; Set flags: Ithsvnzc
 
@@ -124,7 +123,7 @@ xmb_log_test:
 	rjmp  xmb_log_fault_00
 
 	mov   r24,     r7      ; 0x5A (01011010) |
-	ori   r24,     0x69    ; 0x69 (01101001)
+	or    r24,     r21     ; 0x69 (01101001)
 	cpse  r24,     r12     ; 0x7B (01111011) Result
 	rjmp  xmb_log_fault_00
 	in    r3,      SR_IO
@@ -134,7 +133,7 @@ xmb_log_test:
 	out   SR_IO,   r1      ; Set flags: ITHSVNZC
 
 	mov   XL,      r0      ; 0x00 (00000000) |
-	ori   XL,      0x00    ; 0x00 (00000000)
+	or    XL,      r0      ; 0x00 (00000000)
 	cpse  XL,      r0      ; 0x00 (00000000) Result
 	rjmp  xmb_log_fault_00
 	in    r3,      SR_IO
@@ -142,7 +141,7 @@ xmb_log_test:
 	rjmp  xmb_log_fault_00
 
 	mov   XH,      r7      ; 0x5A (01011010) |
-	ori   XH,      0x96    ; 0x96 (10010110)
+	or    XH,      r20     ; 0x96 (10010110)
 	cpse  XH,      r11     ; 0xDE (11011110) Result
 	rjmp  xmb_log_fault_00
 	in    r3,      SR_IO
@@ -173,31 +172,30 @@ xmb_log_test:
 	cpse  r3,      r19     ; Flags must be: ITHsvnzC
 	rjmp  xmb_log_fault_00
 
-	; AND & ANDI instruction test. Covers all four possible logic
-	; combinations for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible
-	; flag outputs.
+	; ORI instruction test. Covers all four possible logic combinations
+	; for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible flag outputs.
 
 	out   SR_IO,   r16     ; Set flags: Ithsvnzc
 
-	mov   XL,      r0      ; 0x00 (00000000) &
-	andi  XL,      0x00    ; 0x00 (00000000)
-	cpse  XL,      r0      ; 0x00 (00000000) Result
+	mov   r25,     r0      ; 0x00 (00000000) |
+	or    r25,     0x00    ; 0x00 (00000000)
+	cpse  r25,     r0      ; 0x00 (00000000) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r17     ; Flags must be: IthsvnZc
 	rjmp  xmb_log_fault_01
 
-	mov   r3,      r7      ; 0x5A (01011010) &
-	and   r3,      r20     ; 0x96 (10010110)
-	cpse  r3,      ZH      ; 0x12 (00010010) Result
+	mov   r25,     r21     ; 0x69 (01101001) |
+	ori   r25,     0x33    ; 0x33 (00110011)
+	cpse  r25,     r12     ; 0x7B (01111011) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r16     ; Flags must be: Ithsvnzc
 	rjmp  xmb_log_fault_01
 
-	mov   r25,     r6      ; 0xA5 (10100101) &
-	andi  r25,     0x96    ; 0x96 (10010110)
-	cpse  r25,     r14     ; 0x84 (10000100) Result
+	mov   r24,     r20     ; 0x96 (10010110) |
+	ori   r24,     0x33    ; 0x33 (00110011)
+	cpse  r24,     r13     ; 0xB7 (10110111) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r18     ; Flags must be: IthSvNzc
@@ -205,37 +203,171 @@ xmb_log_test:
 
 	out   SR_IO,   r1      ; Set flags: ITHSVNZC
 
-	mov   r8,      r0      ; 0x00 (00000000) &
-	and   r8,      r0      ; 0x00 (00000000)
-	cpse  r8,      r0      ; 0x00 (00000000) Result
+	mov   XL,      r0      ; 0x00 (00000000) |
+	ori   XL,      0x00    ; 0x00 (00000000)
+	cpse  XL,      r0      ; 0x00 (00000000) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r22     ; Flags must be: ITHsvnZC
 	rjmp  xmb_log_fault_01
 
-	mov   r24,     r6      ; 0xA5 (10100101) &
-	and   r24,     r21     ; 0x69 (01101001)
-	cpse  r24,     ZL      ; 0x21 (00100001) Result
-	rjmp  xmb_log_fault_01
-	in    r3,      SR_IO
-	cpse  r3,      r19     ; Flags must be: ITHsvnzC
-	rjmp  xmb_log_fault_01
-
-	mov   r4,      r7      ; 0x5A (01011010) &
-	and   r4,      r21     ; 0x69 (01101001)
-	cpse  r4,      r15     ; 0x48 (01001000) Result
-	rjmp  xmb_log_fault_01
-	in    r3,      SR_IO
-	cpse  r3,      r19     ; Flags must be: ITHsvnzC
-	rjmp  xmb_log_fault_01
-
-	mov   XH,      r1      ; 0xFF (11111111) &
-	andi  XH,      0xFF    ; 0xFF (11111111)
-	cpse  XH,      r1      ; 0xFF (11111111) Result (Testing 0xFF result & flag combo)
+	mov   XH,      r21     ; 0x69 (01101001) |
+	ori   XH,      0xCC    ; 0xCC (11001100)
+	cpse  XH,      r10     ; 0xED (11101101) Result
 	rjmp  xmb_log_fault_01
 	in    r3,      SR_IO
 	cpse  r3,      r23     ; Flags must be: ITHSvNzC
 	rjmp  xmb_log_fault_01
+
+	mov   r24,     r20     ; 0x96 (10010110) |
+	ori   r24,     0xCC    ; 0xCC (11001100)
+	cpse  r24,     r11     ; 0xDE (11011110) Result
+	rjmp  xmb_log_fault_01
+	in    r3,      SR_IO
+	cpse  r3,      r23     ; Flags must be: ITHSvNzC
+	rjmp  xmb_log_fault_01
+
+	mov   XL,      r7      ; 0x5A (01011010) |
+	ori   XL,      0xA5    ; 0xA5 (10100101)
+	cpse  XL,      r1      ; 0xFF (11111111) Result (Testing 0xFF result)
+	rjmp  xmb_log_fault_01
+	in    r3,      SR_IO
+	cpse  r3,      r23     ; Flags must be: ITHSvNzC
+	rjmp  xmb_log_fault_01
+
+	mov   XH,      r21     ; 0x69 (01101001) |
+	ori   XH,      0x33    ; 0x33 (00110011)
+	cpse  XH,      r12     ; 0x7B (01111011) Result (Just for flag combination)
+	rjmp  xmb_log_fault_01
+	in    r3,      SR_IO
+	cpse  r3,      r19     ; Flags must be: ITHsvnzC
+	rjmp  xmb_log_fault_01
+
+	; AND instruction test. Covers all four possible logic combinations
+	; for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible flag outputs.
+
+	out   SR_IO,   r16     ; Set flags: Ithsvnzc
+
+	mov   XL,      r0      ; 0x00 (00000000) &
+	and   XL,      r0      ; 0x00 (00000000)
+	cpse  XL,      r0      ; 0x00 (00000000) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r17     ; Flags must be: IthsvnZc
+	rjmp  xmb_log_fault_02
+
+	mov   r3,      r7      ; 0x5A (01011010) &
+	and   r3,      r20     ; 0x96 (10010110)
+	cpse  r3,      ZH      ; 0x12 (00010010) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r16     ; Flags must be: Ithsvnzc
+	rjmp  xmb_log_fault_02
+
+	mov   r25,     r6      ; 0xA5 (10100101) &
+	and   r25,     r20     ; 0x96 (10010110)
+	cpse  r25,     r14     ; 0x84 (10000100) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r18     ; Flags must be: IthSvNzc
+	rjmp  xmb_log_fault_02
+
+	out   SR_IO,   r1      ; Set flags: ITHSVNZC
+
+	mov   r8,      r0      ; 0x00 (00000000) &
+	and   r8,      r0      ; 0x00 (00000000)
+	cpse  r8,      r0      ; 0x00 (00000000) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r22     ; Flags must be: ITHsvnZC
+	rjmp  xmb_log_fault_02
+
+	mov   r24,     r6      ; 0xA5 (10100101) &
+	and   r24,     r21     ; 0x69 (01101001)
+	cpse  r24,     ZL      ; 0x21 (00100001) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r19     ; Flags must be: ITHsvnzC
+	rjmp  xmb_log_fault_02
+
+	mov   r4,      r7      ; 0x5A (01011010) &
+	and   r4,      r21     ; 0x69 (01101001)
+	cpse  r4,      r15     ; 0x48 (01001000) Result
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r19     ; Flags must be: ITHsvnzC
+	rjmp  xmb_log_fault_02
+
+	mov   XH,      r1      ; 0xFF (11111111) &
+	and   XH,      r1      ; 0xFF (11111111)
+	cpse  XH,      r1      ; 0xFF (11111111) Result (Testing 0xFF result & flag combo)
+	rjmp  xmb_log_fault_02
+	in    r3,      SR_IO
+	cpse  r3,      r23     ; Flags must be: ITHSvNzC
+	rjmp  xmb_log_fault_02
+
+	; ANDI instruction test. Covers all four possible logic combinations
+	; for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible flag outputs.
+
+	out   SR_IO,   r16     ; Set flags: Ithsvnzc
+
+	mov   XL,      r0      ; 0x00 (00000000) &
+	andi  XL,      0x00    ; 0x00 (00000000)
+	cpse  XL,      r0      ; 0x00 (00000000) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r17     ; Flags must be: IthsvnZc
+	rjmp  xmb_log_fault_03
+
+	mov   XL,      YH      ; 0xCC (11001100) &
+	andi  XL,      0x5A    ; 0x5A (01011010)
+	cpse  XL,      r15     ; 0x48 (01001000) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r16     ; Flags must be: Ithsvnzc
+	rjmp  xmb_log_fault_03
+
+	mov   r25,     YH      ; 0xCC (11001100) &
+	andi  r25,     0xA5    ; 0xA5 (10100101)
+	cpse  r25,     r14     ; 0x84 (10000100) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r18     ; Flags must be: IthSvNzc
+	rjmp  xmb_log_fault_03
+
+	out   SR_IO,   r1      ; Set flags: ITHSVNZC
+
+	mov   XH,      r0      ; 0x00 (00000000) &
+	andi  XH,      0x00    ; 0x00 (00000000)
+	cpse  XH,      r0      ; 0x00 (00000000) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r22     ; Flags must be: ITHsvnZC
+	rjmp  xmb_log_fault_03
+
+	mov   r24,     YL      ; 0x33 (00110011) &
+	andi  r24,     0x5A    ; 0x5A (01011010)
+	cpse  r24,     ZH      ; 0x12 (00010010) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r19     ; Flags must be: ITHsvnzC
+	rjmp  xmb_log_fault_03
+
+	mov   XH,      YL      ; 0x33 (00110011) &
+	andi  XH,      0xA5    ; 0xA5 (10100101)
+	cpse  XH,      ZL      ; 0x21 (00100001) Result
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r19     ; Flags must be: ITHsvnzC
+	rjmp  xmb_log_fault_03
+
+	mov   r24,     r1      ; 0xFF (11111111) &
+	andi  r24,     0xFF    ; 0xFF (11111111)
+	cpse  r24,     r1      ; 0xFF (11111111) Result (Testing 0xFF result & flag combo)
+	rjmp  xmb_log_fault_03
+	in    r3,      SR_IO
+	cpse  r3,      r23     ; Flags must be: ITHSvNzC
+	rjmp  xmb_log_fault_03
 
 	; EOR instruction test. Covers all four possible logic combinations
 	; for all bits (0d0s, 0d1s, 1d0s, 1d1s) and all possible flag outputs.
@@ -245,60 +377,60 @@ xmb_log_test:
 	mov   r9,      r0      ; 0x00 (00000000) ^
 	eor   r9,      r0      ; 0x00 (00000000)
 	cpse  r9,      r0      ; 0x00 (00000000) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r17     ; Flags must be: IthsvnZc
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	mov   r25,     r7      ; 0x5A (01011010) ^
 	eor   r25,     r20     ; 0x96 (10010110)
 	cpse  r25,     YH      ; 0xCC (11001100) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r18     ; Flags must be: IthSvNzc
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	mov   r2,      r6      ; 0xA5 (10100101) ^
 	eor   r2,      r20     ; 0x96 (10010110)
 	cpse  r2,      YL      ; 0x33 (00110011) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r16     ; Flags must be: Ithsvnzc
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	out   SR_IO,   r1      ; Set flags: ITHSVNZC
 
 	mov   XL,      r1      ; 0xFF (11111111) ^
 	eor   XL,      r1      ; 0xFF (11111111)
 	cpse  XL,      r0      ; 0x00 (00000000) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r22     ; Flags must be: ITHsvnZC
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	mov   r24,     r6      ; 0xA5 (10100101) ^
 	eor   r24,     r21     ; 0x69 (01101001)
 	cpse  r24,     YH      ; 0xCC (11001100) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r23     ; Flags must be: ITHSvNzC
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	mov   r8,      r7      ; 0x5A (01011010) ^
 	eor   r8,      r21     ; 0x69 (01101001)
 	cpse  r8,      YL      ; 0x48 (01001000) Result
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r19     ; Flags must be: ITHsvnzC
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	mov   XH,      r21     ; 0x69 (01101001) ^
 	eor   XH,      r20     ; 0x96 (10010110)
 	cpse  XH,      r1      ; 0xFF (11111111) Result (Testing 0xFF result)
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 	in    r3,      SR_IO
 	cpse  r3,      r23     ; Flags must be: ITHSvNzC
-	rjmp  xmb_log_fault_02
+	rjmp  xmb_log_fault_04
 
 	; COM instruction test. Covers all four possible logic combinations
 	; for all bits (0d1s, 0d1s; it is an EOR with 0xFF) and all possible
@@ -314,52 +446,52 @@ xmb_log_test:
 	mov   r4,      r1      ; 0xFF (11111111) ^
 	com   r4               ; 0xFF (11111111)
 	cpse  r4,      r0      ; 0x00 (00000000) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r17     ; Flags must be: IthsvnZC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	mov   r25,     r7      ; 0x5A (01011010) ^
 	com   r25              ; 0xFF (11111111)
 	cpse  r25,     r6      ; 0xA5 (10100101) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r18     ; Flags must be: IthSvNzC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	mov   r5,      r20     ; 0x96 (10010110) ^
 	com   r5               ; 0xFF (11111111)
 	cpse  r5,      r21     ; 0x69 (01101001) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r16     ; Flags must be: IthsvnzC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	out   SR_IO,   r1      ; Set flags: ITHSVNZC
 
 	mov   r24,     r1      ; 0xFF (11111111) ^
 	com   r24              ; 0xFF (11111111)
 	cpse  r24,     r0      ; 0x00 (00000000) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r22     ; Flags must be: ITHsvnZC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	mov   XL,      r21     ; 0x69 (01101001) ^
 	com   XL               ; 0xFF (11111111)
 	cpse  XL,      r20     ; 0x96 (10010110) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r23     ; Flags must be: ITHSvNzC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	mov   r9,      r6      ; 0xA5 (10100101) ^
 	com   r9               ; 0xFF (11111111)
 	cpse  r9,      r7      ; 0x5A (01011010) Result
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 	in    r3,      SR_IO
 	cpse  r3,      r19     ; Flags must be: ITHsvnzC
-	rjmp  xmb_log_fault_03
+	rjmp  xmb_log_fault_05
 
 	; Set up part of execution chain for next element & Return
 
@@ -385,6 +517,16 @@ xmb_log_fault_02:
 
 xmb_log_fault_03:
 	ldi   r24,     0x03
+	ldi   r25,     0x05
+	jmp   XMB_FAULT
+
+xmb_log_fault_04:
+	ldi   r24,     0x04
+	ldi   r25,     0x05
+	jmp   XMB_FAULT
+
+xmb_log_fault_05:
+	ldi   r24,     0x05
 	ldi   r25,     0x05
 	jmp   XMB_FAULT
 
