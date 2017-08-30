@@ -100,10 +100,10 @@ xmb_test_table:
 	jmp   xmb_creg
 	jmp   xmb_cond
 	jmp   xmb_jump
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
+	jmp   xmb_crc
+	jmp   xmb_ram
+	jmp   xmb_log
+	jmp   xmb_sub
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
