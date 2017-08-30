@@ -122,7 +122,7 @@ xmb_sub_test:
 	out   SR_IO,   r20
 	subi  r16,     0x1E    ; SUBI
 	in    r6,      SR_IO
-	cpse  r4,      r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_02
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_02
@@ -148,7 +148,7 @@ xmb_sub_test:
 	out   SR_IO,   r20
 	sbci  r16,     0x1E    ; SBCI
 	in    r6,      SR_IO
-	cpse  r4,      r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r22
 	rjmp  xmb_sub_fault_06
@@ -206,9 +206,9 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
-	ldi   r16,     0x1E    ; 0x8B (10001011) -
-	ldi   r17,     0x1E    ; 0x8B (10001011) -
-	ldi   r20,     0x81    ;    1 (       1) IthsvnzC Input flags
+	ldi   r16,     0x8A    ; 0x8A (10001010) -
+	ldi   r17,     0x8B    ; 0x8B (10001011) -
+	ldi   r20,     0x81    ;    * (       *) IthsvnzC Input flags
 	ldi   r18,     0xFF    ; 0xFF (11111111) Result
 	ldi   r19,     0xB5    ; Output flags:   ItHSvNzC
 	movw  r10,     r16
@@ -228,17 +228,19 @@ xmb_sub_test:
 	out   SR_IO,   r20
 	subi  r16,     0x8B    ; SUBI
 	in    r6,      SR_IO
-	cpse  r10,     r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_02
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_02
-	mov   r16,     r4
+	mov   r16,     r10
 	out   SR_IO,   r20
 	cpi   r16,     0x8B    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
 	out   SR_IO,   r20
+	ldi   r16,     0x8B    ; 0x8B (10001011) Destination (Carry OK)
+	mov   r10,     r16
 	sbc   r10,     r11     ; SBC
 	in    r6,      SR_IO
 	cpse  r10,     r18
@@ -254,16 +256,16 @@ xmb_sub_test:
 	out   SR_IO,   r20
 	sbci  r16,     0x8B    ; SBCI
 	in    r6,      SR_IO
-	cpse  r10,     r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
 	ldi   ZL,      0x74    ; 0x74 (01110100) -
-	ldi   ZH,      0x74    ; 0x74 (01110100) -
-	ldi   r20,     0xFF    ;    1 (       1) ITHSVNZC Input flags
+	ldi   ZH,      0x75    ; 0x75 (01110101) -
+	ldi   r20,     0xFF    ;    * (       *) ITHSVNZC Input flags
 	ldi   r18,     0xFF    ; 0xFF (11111111) Result
-	ldi   r19,     0xF7    ; Output flags:   ITHSvNZC
+	ldi   r19,     0xF5    ; Output flags:   ITHSvNzC
 	mov   r1,      ZL
 	out   SR_IO,   r20
 	sub   ZL,      ZH      ; SUB
@@ -279,7 +281,7 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_01
 	out   SR_IO,   r20
-	subi  ZL,      0xE1    ; SUBI
+	subi  ZL,      0x75    ; SUBI
 	in    r6,      SR_IO
 	cpse  ZL,      r18
 	rjmp  xmb_sub_fault_02
@@ -287,11 +289,12 @@ xmb_sub_test:
 	rjmp  xmb_sub_fault_02
 	mov   ZL,      r1
 	out   SR_IO,   r20
-	cpi   ZL,      0xE1    ; CPI
+	cpi   ZL,      0x75    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
 	out   SR_IO,   r20
+	ldi   ZH,      0x74    ; 0x74 (01110100) Source (Carry OK)
 	sbc   ZL,      ZH      ; SBC
 	in    r6,      SR_IO
 	cpse  ZL,      r18
@@ -305,17 +308,17 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
-	sbci  ZL,      0xE1    ; SBCI
+	sbci  ZL,      0x74    ; SBCI
 	in    r6,      SR_IO
 	cpse  ZL,      r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
-	ldi   YL,      0xA5    ; 0xA5 (10101010) -
-	ldi   YH,      0x5A    ; 0x5A (01010101) -
+	ldi   YL,      0xAA    ; 0xAA (10101010) -
+	ldi   YH,      0x55    ; 0x55 (01010101) -
 	ldi   r20,     0x80    ;    0 (       0) Ithsvnzc Input flags
-	ldi   r18,     0x5A    ; 0x5A (01010101) Result
+	ldi   r18,     0x55    ; 0x55 (01010101) Result
 	ldi   r19,     0x98    ; Output flags:   IthSVnzc
 	mov   r7,      YL
 	out   SR_IO,   r20
@@ -332,7 +335,7 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_01
 	out   SR_IO,   r20
-	subi  YL,      0xE1    ; SUBI
+	subi  YL,      0x55    ; SUBI
 	in    r6,      SR_IO
 	cpse  YL,      r18
 	rjmp  xmb_sub_fault_02
@@ -340,7 +343,7 @@ xmb_sub_test:
 	rjmp  xmb_sub_fault_02
 	mov   YL,      r7
 	out   SR_IO,   r20
-	cpi   YL,      0xE1    ; CPI
+	cpi   YL,      0x55    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
@@ -358,17 +361,17 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
-	sbci  YL,      0xE1    ; SBCI
+	sbci  YL,      0x55    ; SBCI
 	in    r6,      SR_IO
 	cpse  YL,      r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
-	ldi   r16,     0x5A    ; 0x5A (01010101) -
-	ldi   r17,     0xA5    ; 0xA5 (10101010) -
-	ldi   r20,     0xFF    ;    1 (       1) ITHSVNZC Input flags
-	ldi   r18,     0xA5    ; 0xA5 (10101010) Result
+	ldi   r16,     0x54    ; 0x54 (01010100) -
+	ldi   r17,     0xAA    ; 0xAA (10101010) -
+	ldi   r20,     0xFF    ;    * (       *) ITHSVNZC Input flags
+	ldi   r18,     0xAA    ; 0xAA (10101010) Result
 	ldi   r19,     0xED    ; Output flags:   ITHsVNzC
 	movw  r14,     r16
 	out   SR_IO,   r20
@@ -385,19 +388,21 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_01
 	out   SR_IO,   r20
-	subi  r16,     0x8B    ; SUBI
+	subi  r16,     0xAA    ; SUBI
 	in    r6,      SR_IO
-	cpse  r14,     r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_02
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_02
-	mov   r16,     r4
+	mov   r16,     r14
 	out   SR_IO,   r20
-	cpi   r16,     0x8B    ; CPI
+	cpi   r16,     0xAA    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
 	out   SR_IO,   r20
+	ldi   r16,     0x55    ; 0x55 (01010101) Destination (Carry OK)
+	mov   r14,     r16
 	sbc   r14,     r15     ; SBC
 	in    r6,      SR_IO
 	cpse  r14,     r18
@@ -411,19 +416,18 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
-	sbci  r16,     0x8B    ; SBCI
+	sbci  r16,     0xAA    ; SBCI
 	in    r6,      SR_IO
-	cpse  r14,     r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
 	ldi   r16,     0x00    ; 0x00 (00000000) -
 	ldi   r17,     0xFF    ; 0xFF (11111111) -
-	ldi   r20,     0x81    ;    1 (       1) IthsvnzC Input flags
-	ldi   r18,     0x00    ; 0x00 (00000000) Result
-	ldi   r19,     0xA3    ; Output flags:   ItHsvnZC (SUB, CP, SUBI, CPI)
-	ldi   r22,     0xA1    ; Output flags:   ItHsvnzC (SBC, CPC, SBCI)
+	ldi   r20,     0x81    ;    * (       *) IthsvnzC Input flags
+	ldi   r18,     0x01    ; 0x01 (00000001) Result
+	ldi   r19,     0xA1    ; Output flags:   ItHsvnzC
 	movw  r0,      r16
 	out   SR_IO,   r20
 	sub   r0,      r1      ; SUB
@@ -439,19 +443,20 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_01
 	out   SR_IO,   r20
-	subi  r16,     0x8B    ; SUBI
+	subi  r16,     0xFF    ; SUBI
 	in    r6,      SR_IO
-	cpse  r0,      r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_02
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_02
-	mov   r16,     r4
+	mov   r16,     r0
 	out   SR_IO,   r20
-	cpi   r16,     0x8B    ; CPI
+	cpi   r16,     0xFF    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
 	out   SR_IO,   r20
+	ldi   r18,     0x00    ; 0x00 (00000000) Result (Carry OK, no Z flag)
 	sbc   r0,      r1      ; SBC
 	in    r6,      SR_IO
 	cpse  r0,      r18
@@ -465,9 +470,9 @@ xmb_sub_test:
 	cpse  r6,      r22
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
-	sbci  r16,     0x8B    ; SBCI
+	sbci  r16,     0xFF    ; SBCI
 	in    r6,      SR_IO
-	cpse  r0,      r18
+	cpse  r16,     r18
 	rjmp  xmb_sub_fault_06
 	cpse  r6,      r22
 	rjmp  xmb_sub_fault_06
@@ -492,7 +497,7 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_01
 	out   SR_IO,   r20
-	subi  r22,     0xE1    ; SUBI
+	subi  r22,     0x00    ; SUBI
 	in    r6,      SR_IO
 	cpse  r22,     r18
 	rjmp  xmb_sub_fault_02
@@ -500,7 +505,7 @@ xmb_sub_test:
 	rjmp  xmb_sub_fault_02
 	mov   r22,     r7
 	out   SR_IO,   r20
-	cpi   r22,     0xE1    ; CPI
+	cpi   r22,     0x00    ; CPI
 	in    r6,      SR_IO
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_03
@@ -518,7 +523,7 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
-	sbci  r22,     0xE1    ; SBCI
+	sbci  r22,     0x00    ; SBCI
 	in    r6,      SR_IO
 	cpse  r22,     r18
 	rjmp  xmb_sub_fault_06
@@ -533,37 +538,37 @@ xmb_sub_test:
 	jmp   xmb_glob_tail_next
 
 
-xmb_log_fault_00:
+xmb_sub_fault_00:
 	ldi   r24,     0x00
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_01:
+xmb_sub_fault_01:
 	ldi   r24,     0x01
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_02:
+xmb_sub_fault_02:
 	ldi   r24,     0x02
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_03:
+xmb_sub_fault_03:
 	ldi   r24,     0x03
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_04:
+xmb_sub_fault_04:
 	ldi   r24,     0x04
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_05:
+xmb_sub_fault_05:
 	ldi   r24,     0x05
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
 
-xmb_log_fault_06:
+xmb_sub_fault_06:
 	ldi   r24,     0x06
 	ldi   r25,     0x06
 	jmp   XMB_FAULT
@@ -573,4 +578,4 @@ xmb_log_fault_06:
 ;
 ; Test entry points
 ;
-.global xmb_log_test
+.global xmb_sub_test
