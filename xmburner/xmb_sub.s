@@ -461,20 +461,20 @@ xmb_sub_test:
 	in    r6,      SR_IO
 	cpse  r0,      r18
 	rjmp  xmb_sub_fault_04
-	cpse  r6,      r22
+	cpse  r6,      r19
 	rjmp  xmb_sub_fault_04
 	mov   r0,      r16
 	out   SR_IO,   r20
 	cpc   r0,      r1      ; CPC
 	in    r6,      SR_IO
-	cpse  r6,      r22
+	cpse  r6,      r19
 	rjmp  xmb_sub_fault_05
 	out   SR_IO,   r20
 	sbci  r16,     0xFF    ; SBCI
 	in    r6,      SR_IO
 	cpse  r16,     r18
 	rjmp  xmb_sub_fault_06
-	cpse  r6,      r22
+	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
 	ldi   r22,     0xFF    ; 0xFF (11111111) -
@@ -482,7 +482,7 @@ xmb_sub_test:
 	ldi   r20,     0xFE    ;    0 (       0) ITHSVNZc Input flags
 	ldi   r18,     0xFF    ; 0xFF (11111111) Result
 	ldi   r19,     0xD4    ; Output flags:   IThSvNzc
-	mov   r7,      YL
+	mov   r7,      r22
 	out   SR_IO,   r20
 	sub   r22,     r23     ; SUB
 	in    r6,      SR_IO
