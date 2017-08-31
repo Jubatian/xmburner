@@ -530,6 +530,118 @@ xmb_sub_test:
 	cpse  r6,      r19
 	rjmp  xmb_sub_fault_06
 
+	; Extra tests to run operand combinations which cause a c -> C
+	; transition and a C -> c transition (Carry flag). Such are not
+	; executed in the above 8 tests as the value combinations necessary
+	; for them to get full logic coverage doesn't permit it.
+
+	ldi   r23,     0x3C    ; 0x3C (00111100) -
+	ldi   r22,     0xE8    ; 0xE8 (11101000) -
+	ldi   r20,     0x80    ;    0 (       0) Ithsvnzc Input flags
+	ldi   r18,     0x54    ; 0x54 (01010100) Result
+	ldi   r19,     0x81    ; Output flags:   IthsvnzC
+	movw  r2,      r22
+	out   SR_IO,   r20
+	sub   r3,      r2      ; SUB
+	in    r6,      SR_IO
+	cpse  r3,      r18
+	rjmp  xmb_sub_fault_00
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_00
+	mov   r3,      r23
+	out   SR_IO,   r20
+	cp    r3,      r2      ; CP
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_01
+	out   SR_IO,   r20
+	subi  r23,     0xE8    ; SUBI
+	in    r6,      SR_IO
+	cpse  r23,     r18
+	rjmp  xmb_sub_fault_02
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_02
+	mov   r23,     r3
+	out   SR_IO,   r20
+	cpi   r23,     0xE8    ; CPI
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_03
+	out   SR_IO,   r20
+	sbc   r3,      r2      ; SBC
+	in    r6,      SR_IO
+	cpse  r3,      r18
+	rjmp  xmb_sub_fault_04
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_04
+	mov   r3,      r23
+	out   SR_IO,   r20
+	cpc   r3,      r2      ; CPC
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_05
+	out   SR_IO,   r20
+	sbci  r23,     0xE8    ; SBCI
+	in    r6,      SR_IO
+	cpse  r23,     r18
+	rjmp  xmb_sub_fault_06
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_06
+
+	ldi   r25,     0xB8    ; 0xB8 (10111000) -
+	ldi   r24,     0x4B    ; 0x4B (01001011) -
+	ldi   r20,     0xFF    ;    * (       *) ITHSVNZC Input flags
+	ldi   r18,     0x6D    ; 0x6D (01101101) Result
+	ldi   r19,     0xF8    ; Output flags:   ITHSVnzc
+	mov   r5,      r25
+	out   SR_IO,   r20
+	sub   r25,     r24     ; SUB
+	in    r6,      SR_IO
+	cpse  r25,     r18
+	rjmp  xmb_sub_fault_00
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_00
+	mov   r25,     r5
+	out   SR_IO,   r20
+	cp    r25,     r24     ; CP
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_01
+	out   SR_IO,   r20
+	subi  r25,     0x4B    ; SUBI
+	in    r6,      SR_IO
+	cpse  r25,     r18
+	rjmp  xmb_sub_fault_02
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_02
+	mov   r25,     r5
+	out   SR_IO,   r20
+	cpi   r25,     0x4B    ; CPI
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_03
+	out   SR_IO,   r20
+	ldi   r18,     0x6C    ; 0x6C (01101100) Result (Carry OK)
+	sbc   r25,     r24     ; SBC
+	in    r6,      SR_IO
+	cpse  r25,     r18
+	rjmp  xmb_sub_fault_04
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_04
+	mov   r25,     r5
+	out   SR_IO,   r20
+	cpc   r25,     r24     ; CPC
+	in    r6,      SR_IO
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_05
+	out   SR_IO,   r20
+	sbci  r25,     0x4B    ; SBCI
+	in    r6,      SR_IO
+	cpse  r25,     r18
+	rjmp  xmb_sub_fault_06
+	cpse  r6,      r19
+	rjmp  xmb_sub_fault_06
+
 
 	; Set up part of execution chain for next element & Return
 
