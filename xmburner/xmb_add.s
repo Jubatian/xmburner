@@ -61,7 +61,7 @@ xmb_add:
 
 xmb_add_fault_ff:
 	ldi   r24,     0xFF
-	ldi   r25,     0x06
+	ldi   r25,     0x07
 	jmp   XMB_FAULT
 
 xmb_add_test:
@@ -101,7 +101,7 @@ xmb_add_test:
 	ldi   YH,      0xD4    ; 0xD4 (11010100) +
 	ldi   XL,      0x80    ;    0 (       0) Ithsvnzc Input flags
 	ldi   XH,      0xFF    ; 0xFF (11111111) Result
-	ldi   ZL,      0x82    ; Output flags:   IthSvNzc
+	ldi   ZL,      0x94    ; Output flags:   IthSvNzc
 	movw  r6,      YL
 	out   SR_IO,   XL
 	add   r6,      r7      ; ADD
@@ -297,7 +297,7 @@ xmb_add_test:
 	rjmp  xmb_add_fault_00
 	mov   r15,     YH
 	out   SR_IO,   XL
-	adc   r15,     r8      ; ADC
+	adc   r15,     r14     ; ADC
 	in    ZH,      SR_IO
 	cpse  r15,     XH
 	rjmp  xmb_add_fault_01
@@ -337,12 +337,12 @@ xmb_add_test:
 
 xmb_add_fault_00:
 	ldi   r24,     0x00
-	ldi   r25,     0x06
+	ldi   r25,     0x07
 	jmp   XMB_FAULT
 
 xmb_add_fault_01:
 	ldi   r24,     0x01
-	ldi   r25,     0x06
+	ldi   r25,     0x07
 	jmp   XMB_FAULT
 
 
