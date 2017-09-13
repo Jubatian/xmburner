@@ -27,6 +27,19 @@
 
 
 /*
+** Address of watchdog routine, called when XMBurner completes an xmb_run()
+** pass. It takes a single 32 bit parameter which one's value is 0xDEADF158.
+** You should use this for a comparison, to prevent resetting the watchdog
+** when the routine was called by runaway code. The default implementation
+** calls WDR, and jumps on XMB_FAULT (0xFF:0xFF) if the comparison fails.
+*/
+
+#ifndef XMB_WDRESET
+#define XMB_WDRESET xmb_wdreset_default
+#endif
+
+
+/*
 ** Section to place the branch test (xmb_jump) within. Ideally it should be
 ** placed in the middle of the flash (middle_address - 64 words) so it can
 ** test the longest carry sequence in the relative branch / jump adder (in a

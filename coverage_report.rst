@@ -54,11 +54,11 @@ test library adhering to such a demand.
 
 
 
-Coverage matrix
+Coverage table
 ------------------------------------------------------------------------------
 
 
-Below is a coverage matrix providing the instructions of the CPU and the
+Below is a coverage table providing the instructions of the CPU and the
 XMBurner components which do tests on these.
 
 Components are named by the distinctive fragment of their file name in the
@@ -192,17 +192,17 @@ xmburner directory, such as "creg" referring to "xmb_creg.s".
 +---------------------+---------------+------------+-------------------------+
 | 1001 010d dddd 1010 | DEC Rd        || alex      ||                        |
 +---------------------+---------------+------------+-------------------------+
-| 1001 010k kkkk 110k | JMP k         ||           || Next word is address   |
+| 1001 010k kkkk 110k | JMP k         || #1        || Next word is address   |
 +---------------------+---------------+------------+-------------------------+
-| 1001 010k kkkk 111k | CALL k        ||           || Next word is address   |
+| 1001 010k kkkk 111k | CALL k        || #1        || Next word is address   |
 +---------------------+---------------+------------+-------------------------+
 | 1001 0100 0sss 1000 | BSET s        || creg      || SEC, etc are aliases   |
 +---------------------+---------------+------------+-------------------------+
 | 1001 0100 1sss 1000 | BCLR s        || creg      || CLC, etc are aliases   |
 +---------------------+---------------+------------+-------------------------+
-| 1001 0100 0000 1001 | IJMP          ||           ||                        |
+| 1001 0100 0000 1001 | IJMP          || #1        ||                        |
 +---------------------+---------------+------------+-------------------------+
-| 1001 0101 0000 1000 | RET           ||           ||                        |
+| 1001 0101 0000 1000 | RET           || #1        ||                        |
 +---------------------+---------------+------------+-------------------------+
 | 1001 0101 0000 1001 | ICALL         ||           ||                        |
 +---------------------+---------------+------------+-------------------------+
@@ -260,6 +260,11 @@ xmburner directory, such as "creg" referring to "xmb_creg.s".
 +---------------------+---------------+------------+-------------------------+
 | 1111 111r rrrr 0bbb | SBRS Rr, b    || cond      ||                        |
 +---------------------+---------------+------------+-------------------------+
+
+- (#1): These instructions are tested during executing the entry and exit
+  mechanisms of XMBurner (xmb_run() in xmb_main.s, the tail code in
+  xmb_glob.s), without them operating correctly, XMBurner components can not
+  run, which should be detected by a watchdog (XMB_WDRESET).
 
 
 

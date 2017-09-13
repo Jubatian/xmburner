@@ -40,13 +40,16 @@ xmb_glob_chain:
 ; Trailing code for returning to restore registers for C
 ;
 .global xmb_glob_tail_next
-.global xmb_glob_tail_chain
 .global xmb_glob_tail
 xmb_glob_tail_next:
+	ldi   r25,     0xDE
+	ldi   r24,     0xAD
+	ldi   r23,     0xF1
+	ldi   r22,     0x58    ; Comparison parameter for WD reset
+	call  XMB_WDRESET
 	lds   r0,      xmb_glob_next
 	inc   r0
 	sts   xmb_glob_next, r0
-xmb_glob_tail_chain:
 	ldi   ZL,      lo8(xmb_glob_chain)
 	ldi   ZH,      hi8(xmb_glob_chain)
 	std   Z + 2,   r18
@@ -75,3 +78,27 @@ xmb_glob_tail:
 	pop   YL
 	pop   YH
 	ret
+
+
+
+;
+; Default watchdog reset routine
+;
+.global xmb_wdreset_default
+xmb_wdreset_default:
+	ldi   r21,     0xDE
+	ldi   r20,     0xAD
+	cpse  r25,     r21
+	rjmp  xmb_wdreset_default_nr
+	cpse  r24,     r20
+	rjmp  xmb_wdreset_default_nr
+	subi  r23,     0xF1
+	brne  xmb_wdreset_default_nr
+	subi  r22,     0x58
+	brne  xmb_wdreset_default_nr
+	wdr
+	ret
+xmb_wdreset_default_nr:
+	ldi   r24,     0xFF
+	ldi   r25,     0xFF
+	jmp   XMB_FAULT
