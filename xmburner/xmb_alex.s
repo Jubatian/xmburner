@@ -114,7 +114,7 @@ xmb_alex_neg:
 	ldi   r20,     0xAB    ;-0xAB (10101011)
 	ldi   r21,     0x55    ; 0x55 (01010101) Result
 	ldi   YL,      0xFF    ; Input flags:    ITHSVNZC
-	ldi   YH,      0xF5    ; Output flags:   ITHSvNzC
+	ldi   YH,      0xE1    ; Output flags:   ITHsvnzC
 	movw  r4,      r20
 	out   SR_IO,   YL
 	neg   r4               ; NEG
@@ -193,7 +193,7 @@ xmb_alex_neg:
 
 	ldi   r18,     0x40    ;-0x40 (01000000)
 	ldi   r19,     0xC0    ; 0xC0 (11000000) Result
-	movw  r14,     r16
+	movw  r14,     r18
 	out   SR_IO,   XL
 	neg   r14              ; NEG
 	in    r2,      SR_IO
@@ -426,13 +426,13 @@ xmb_alex_idec:
 	ldi   XH,      0xFE    ; 0xFE (11111110) Dest. (INC)
 	ldi   YH,      0xFF    ; 0xFF (11111111) Result (INC)
 	ldi   ZH,      0x80    ; Input flags:    Ithsvnzc
-	ldi   XL,      0x96    ; Output flags:   IthSvNZc
+	ldi   XL,      0x94    ; Output flags:   IthSvNzc
 	out   SR_IO,   ZH
 	inc   XH               ; INC
 	in    r3,      SR_IO
 	cpse  XH,      YH
 	rjmp  xmb_alex_fault_01
-	cpse  r3,      YL
+	cpse  r3,      XL
 	rjmp  xmb_alex_fault_01
 
 	ldi   XH,      0x01    ; 0x01 (00000001) Dest. (DEC)
@@ -443,7 +443,7 @@ xmb_alex_idec:
 	in    r3,      SR_IO
 	cpse  XH,      YH
 	rjmp  xmb_alex_fault_02
-	cpse  r3,      YL
+	cpse  r3,      XL
 	rjmp  xmb_alex_fault_02
 
 xmb_alex_rsh:
@@ -504,9 +504,9 @@ xmb_alex_rsh:
 	rjmp  xmb_alex_fault_04
 	cpse  r9,      r22
 	rjmp  xmb_alex_fault_04
-	mov   r20,     r9
+	mov   r9,      r20
 	out   SR_IO,   r21
-	ror   r20              ; ROR
+	ror   r9               ; ROR
 	in    r4,      SR_IO
 	cpse  r4,      r23
 	rjmp  xmb_alex_fault_05
@@ -556,17 +556,17 @@ xmb_alex_rsh:
 	rjmp  xmb_alex_fault_03
 	mov   r0,      r25
 	out   SR_IO,   r21
-	ror   r25              ; ROR
+	ror   r0               ; ROR
 	in    r4,      SR_IO
 	cpse  r4,      r23
 	rjmp  xmb_alex_fault_05
 	cpse  r0,      r22
 	rjmp  xmb_alex_fault_05
-	mov   r0,      r25
 	ldi   r22,     0x55    ; 0x55 (01010101) Result
 	ldi   r23,     0xE0    ; Output flags:   ITHsvnzc
+	mov   r0,      r25
 	out   SR_IO,   r21
-	lsr   r25              ; LSR
+	lsr   r0               ; LSR
 	in    r4,      SR_IO
 	cpse  r4,      r23
 	rjmp  xmb_alex_fault_04
