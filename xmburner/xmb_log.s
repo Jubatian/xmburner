@@ -14,7 +14,7 @@
 ; - The OR and ORI instructions including SREG operations.
 ; - The EOR instruction including SREG operations.
 ; - The COM instruction including SREG operations.
-; - The MOV and MOVW instructions (only high register sources for the latter).
+; - The MOV instruction.
 ;
 ; Interrupts are enabled after this component (it also doesn't disable them).
 ;
