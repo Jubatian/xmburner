@@ -28,8 +28,8 @@
 .set SR_IO,  _SFR_IO_ADDR(SREG)
 
 
-.global xmb_alex
-xmb_alex:
+.global xmb_wops
+xmb_wops:
 
 	; All XMBurner components receive the previous component's exec_id in
 	; r19:r18:r17:r16, set up by xmb_main.s. No other input parameters are
@@ -487,9 +487,9 @@ xmb_wops_test:
 	cpse  r5,      r19
 	rjmp  xmb_wops_fault_01
 
-	ldi   XL,      0xFF    ; 0xFF00 (11111111 00000000) -
-	ldi   XH,      0x00    ; 0x003F (00000000 00111111)
-	ldi   r16,     0x41    ; 0xFEC1 (11111110 11000001) Result
+	ldi   XL,      0x00    ; 0xFF00 (11111111 00000000) -
+	ldi   XH,      0xFF    ; 0x003F (00000000 00111111)
+	ldi   r16,     0xC1    ; 0xFEC1 (11111110 11000001) Result
 	ldi   r17,     0xFE
 	ldi   r18,     0xFF    ; Input flags:    ITHSVNZC
 	ldi   r19,     0xF4    ; Output flags:   ITHSvNzc
