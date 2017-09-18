@@ -382,7 +382,7 @@ xmb_wops_test:
 	ldi   r18,     0x80    ; Input flags:    Ithsvnzc
 	ldi   r19,     0x82    ; Output flags:   IthsvnZc
 	out   SR_IO,   r18
-	adiw  ZL,      0x00    ; SBIW
+	sbiw  ZL,      0x00    ; SBIW
 	in    r5,      SR_IO
 	cpse  r16,     ZL
 	rjmp  xmb_wops_fault_01
