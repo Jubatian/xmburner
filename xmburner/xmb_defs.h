@@ -40,6 +40,17 @@
 
 
 /*
+** Initialization delay in 256K cycle units. Set it up so the watchdog
+** mechanisms guarding your application time out during it, ensuring that the
+** initialization (xmb_init) can not finish without a watchdog alerting if it
+** is recalled in any manner during program execution.
+*/
+#ifndef XMB_INIT_DELAY
+#define XMB_INIT_DELAY 16
+#endif
+
+
+/*
 ** Section to place the branch test (xmb_jump) within. Ideally it should be
 ** placed in the middle of the flash (middle_address - 64 words) so it can
 ** test the longest carry sequence in the relative branch / jump adder (in a
@@ -95,3 +106,10 @@
 #ifndef RAMSIZE
 #define RAMSIZE (RAMEND + 1 - RAMSTART)
 #endif
+
+
+/*
+** Count of XMBurner components (iterated during xmb_run()).
+*/
+
+#define XMB_COMPONENT_COUNT 0x0A

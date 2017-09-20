@@ -47,9 +47,12 @@ xmb_glob_tail_next:
 	ldi   r23,     0xF1
 	ldi   r22,     0x58    ; Comparison parameter for WD reset
 	call  XMB_WDRESET
-	lds   r0,      xmb_glob_next
-	inc   r0
-	sts   xmb_glob_next, r0
+	lds   r20,     xmb_glob_next
+	inc   r20
+	cpi   r20,     XMB_COMPONENT_COUNT
+	brne  .+2
+	ldi   r20,     0x00
+	sts   xmb_glob_next, r20
 	ldi   ZL,      lo8(xmb_glob_chain)
 	ldi   ZH,      hi8(xmb_glob_chain)
 	std   Z + 2,   r18

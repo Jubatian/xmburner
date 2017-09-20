@@ -19,12 +19,55 @@
 ; Initialize.
 ; void xmb_init(void);
 ;
-; Initializes the ALU tester.
+; Initializes the ALU tester. Note that it takes a long time (ideally more
+; than the timeout of all watchdogs used in the application, see
+; XMB_INIT_DELAY).
 ;
 .global xmb_init
 xmb_init:
 
-	; (Will jump onto a specific init test after setting up)
+	; Initialization guard delay
+
+	ldi   r25,     XMB_INIT_DELAY
+	ldi   r24,     0
+	ldi   r23,     0
+	dec   r23
+	nop
+	brne  .-6              ; 4 cycles / iteration; 1K cycles
+	dec   r24
+	brne  .-12             ; 256K cycles
+	dec   r25
+	brne  .-18             ; XMB_INIT_DELAY * 256K cycles
+
+	; Initialization guard notes:
+	; It is not really possible to use anything else here than a watchdog.
+	; The initial state of the RAM is undefined, if the system is
+	; power-cycled (or suffers a brownout), it might still contain
+	; previous values, and it might be desirable depending on the
+	; application to start up proper from this condition. It is so not
+	; possible to rely on guard values. In any sane design however during
+	; init watchdogs should still be uninitialized or timed out.
+
+	; Initialize components which require initialization
+
+	rcall xmb_crc_init
+	rcall xmb_ram_init
+
+	; Initialize execution chain to first component (xmb_creg)
+	; Note: this is the exec_id_from value in xmb_creg.s
+
+	ldi   r25,     0x76
+	ldi   r24,     0xF3
+	ldi   r23,     0xD0
+	ldi   r22,     0xAE
+	ldi   ZL,      lo8(xmb_glob_chain)
+	ldi   ZH,      hi8(xmb_glob_chain)
+	st    Z+,      r22
+	st    Z+,      r23
+	st    Z+,      r24
+	st    Z+,      r25
+	ldi   r25,     0x00
+	sts   xmb_glob_next, r25
 
 	ret
 
@@ -104,26 +147,9 @@ xmb_test_table:
 	jmp   xmb_ram
 	jmp   xmb_log
 	jmp   xmb_sub
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
-	jmp   XMB_FAULT
+	jmp   xmb_add
+	jmp   xmb_alex
+	jmp   xmb_wops
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
@@ -232,3 +258,33 @@ xmb_test_table:
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
+
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+	jmp   XMB_FAULT
+
+
+
+;
+; Return next XMBurner component which will run on xmb_run().
+; uint8_t xmb_next(void);
+;
+.global xmb_next
+xmb_next:
+
+	lds   r24,     xmb_glob_next
+	clr   r25
+	ret
