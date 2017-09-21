@@ -18,6 +18,8 @@
 XMB_CC     ?= avr-gcc
 XMB_MCU    ?= atmega644
 XMB_NATCC  ?= gcc
+XMB_SPATH  ?= .
+XMB_OPATH  ?= .
 
 ## crchex tool name
 
@@ -40,23 +42,29 @@ XMB_NATCFS += -Wall -std=gnu99 -Os
 
 ## XMBurner build directory (objects, binaries)
 
-XMB_OBJ = _xmb_o_
-XMB_BIN = _xmb_b_
+XMB_OBJ = $(XMB_OPATH)/_xmb_o_
+XMB_BIN = $(XMB_OPATH)/_xmb_b_
 
-## XMBurner components
+## XMBurner objects (can be used as dependency and source for linking)
 
-XMB_COMPONENTS  = $(XMB_OBJ)/xmb_glob.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_main.o
+XMB_OBJECTS  = $(XMB_OBJ)/xmb_glob.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_main.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_creg.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_cond.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_jump.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_crc.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_ram.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_log.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_sub.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_add.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_alex.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_wops.o
 
-XMB_COMPONENTS += $(XMB_BIN)/$(XMB_CRCHEX)
+## crchex tool (can be used as dependency or command)
 
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_creg.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_cond.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_jump.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_crc.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_ram.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_log.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_sub.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_add.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_alex.o
-XMB_COMPONENTS += $(XMB_OBJ)/xmb_wops.o
+XMB_CRCHEX_BIN  = $(XMB_BIN)/$(XMB_CRCHEX)
+
+## XMBurner components (can be used as dependency for build all)
+
+XMB_COMPONENTS  = $(XMB_OBJECTS)
+XMB_COMPONENTS += $(XMB_CRCHEX_BIN)
