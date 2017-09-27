@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 620 580"
+   height="580"
+   width="620">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       id="path4795"
+       d="m 280,73 -5,5 15,15 -15,15 -15,-15 -5,5 15,15 -15,15 -15,-15 -5,5 15,15 -10,10 C 135,98 53,180 77,295 c -18,15 -21,24 -23,48 7,-22 12,-27 26,-34 0,20 16,53 46,63 l -11,11 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 -15,15 5,5 15,-15 15,15 v -15 l -160,-160 c 15,-5 25,-9 29,-30 l 55,0 2,13 26,15 14,80 -6,30 40,20 v -10 L 280,476 299,386 l -6,-24 17,11 v -10 l -20,-13 -7,-32 -8,5 5,23 -15,-9 -15,-74 60,-60 v -15 c -22,-20 -39,-31 -59,-41 l 59,-59 v -15 l -15,15 z m 22,123 -72,72 c -25,-95 -122,-82 -146,-1 C 73,140 207,102 302,196 Z m -87,57 c -25,-35 -93,-35 -88,30 -15,0 -25,2 -38,7 C 101,210 184,182 215,253 Z m 5,25 -42,42 c -6,-20 -18,-29 -38,-36 -7,-63 65,-49 80,-6 z m 22,-7 18,87 -15,-9 -13,-68 z m -18,18 8,44 h -52 z m -104,69 c 30,2 54,-56 -19,-60 87,-28 91,91 19,60 z M 90,307 c 104,0 11,93 0,0 z M 267,348 l 16,10 3,15 -16,-10 z m 6,28 16,10 -8,41 z"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke-width:0" />
+    <use
+       transform="matrix(-1,0,0,1,620,0)"
+       height="100%"
+       width="100%"
+       id="use4854"
+       xlink:href="#path4795"
+       y="0"
+       x="0" />
+  </g>
+</svg>
