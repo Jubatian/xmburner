@@ -31,5 +31,5 @@ $(XMB_BIN):
 $(XMB_OBJ)/%.o: $(XMB_SPATH)/xmburner/%.s $(XMB_SPATH)/xmburner/xmb_defs.h | $(XMB_OBJ)
 	$(XMB_CC) $(XMB_ASMFLAGS) -c $< -o $@
 
-$(XMB_BIN)/$(XMB_CRCHEX): $(XMB_SPATH)/xmbtools/crchex.c | $(XMB_BIN)
+$(XMB_CRCHEX_BIN): $(XMB_SPATH)/xmbtools/crchex.c | $(XMB_BIN)
 	$(XMB_NATCC) $(XMB_NATCFS) $< -o $@

@@ -50,8 +50,8 @@ xmb_init:
 
 	; Initialize components which require initialization
 
-	rcall xmb_crc_init
-	rcall xmb_ram_init
+	call  xmb_crc_init
+	call  xmb_ram_init
 
 	; Initialize execution chain to first component (xmb_creg)
 	; Note: this is the exec_id_from value in xmb_creg.s
@@ -122,7 +122,7 @@ xmb_run:
 
 	ldi   r24,     0xFF
 	ldi   r25,     0xFF    ; Fault code for bad jumps
-	lds   ZL,      glob_next
+	lds   ZL,      xmb_glob_next
 	lsl   ZL
 	andi  ZL,      0xFE
 	ldi   ZH,      hi8(pm(xmb_test_table))
