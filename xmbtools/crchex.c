@@ -7,7 +7,7 @@
 **
 ** Processes an Intel HEX file to append a complemented CRC32 to it (so
 ** calculating the complete data's CRC32 including the CRC value would result
-** 0xFFFFFFFF).
+** the CRC32 "magic number" 0xDEBB20E3).
 **
 ** Must be compiled with a C compiler having an int size of at least 32 bits.
 **
@@ -307,7 +307,7 @@ int main(int argc, char* argv[])
          "\n"
          "Applies CRC32 to a program binary provided in Intel HEX format, generating\n"
          "the result on standard output (Intel HEX format). The CRC32 is in negated\n"
-         "form so when processing the entire binary should give 0xFFFFFFFF for a\n"
+         "form so when processing the entire binary should give 0xDEBB20E3 for a\n"
          "correct binary.\n");
   exit(1);
  }
