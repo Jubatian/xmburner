@@ -279,5 +279,7 @@ Component coverage
 - The ROM is tested by a CRC32 algorithm, up to an user specified limit by
   xmb_crc.s.
 
+- The 32 General Purpose Registers are fully tested by xmb_creg.s.
+
 - The SREG, SPH and SPL special function registers are fully tested. GPIOR0 is
   also tested as a necessary resource for certain instruction tests.

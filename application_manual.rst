@@ -132,7 +132,9 @@ should use to check whether the call came from the intended source.
 A default implementation is provided for this routine which resets the
 internal watchdog (by the WDR instruction).
 
-The routine is called once for every xmb_run() call.
+The routine is called once for every xmb_run() call if XMBurner didn't detect
+any fault (including faults of its execution chain which is broken by any
+detected fault).
 
 
 Initialization guard
