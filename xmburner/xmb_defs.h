@@ -113,3 +113,21 @@
 */
 
 #define XMB_COMPONENT_COUNT 0x0A
+
+
+/*
+** Count of fault codes provided in r24 (excluding 0xFF) for each component.
+** The component may so return fault codes 0x00 to (XMB_FID_CNT_xxxx - 1) and
+** 0xFF.
+*/
+
+#define XMB_FID_CNT_CREG  7
+#define XMB_FID_CNT_COND  7
+#define XMB_FID_CNT_JUMP  6
+#define XMB_FID_CNT_CRC   4
+#define XMB_FID_CNT_RAM   5
+#define XMB_FID_CNT_LOG   6
+#define XMB_FID_CNT_SUB   7
+#define XMB_FID_CNT_ADD   2
+#define XMB_FID_CNT_ALEX  7
+#define XMB_FID_CNT_WOPS  3
