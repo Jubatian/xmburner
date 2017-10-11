@@ -87,6 +87,21 @@
 
 
 /*
+** Set this nonzero to enable splitting xmb_crc_isromok() for large devices.
+** This causes calling xmb_run() after each 64Kbyte boundary, which may call a
+** watchdog reset. Use this only if your design has to involve a watchdog
+** which has a too short timeout even during initialization to run
+** xmb_crc_isromok() in one pass. This case xmb_init() has to be called before
+** xmb_crc_isromok(). Note that if you have xmb_bsize set a multiple of
+** 64 KBytes, the last xmb_run() will happen after the last byte.
+*/
+
+#ifndef XMB_CRC_SPLIT
+#define XMB_CRC_SPLIT 0
+#endif
+
+
+/*
 ** Size of binary for CRC32 checking. This is a 2 or 3 byte Little Endian
 ** value in ROM (if the MCU's ROM is 64 KBytes or less, only the first 2 bytes
 ** are used, which should be provided in accordance with the location of the

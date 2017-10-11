@@ -110,8 +110,8 @@ ensuring robustness against the already detected failure.
 
 - SAFE: The routine should attempt to take measures to halt execution. Note
   that XMBurner itself will break its execution chain, so it is quite robust
-  on its own (see also the "Using watchdogs" chapter), but taking proper
-  measures here to halt execution improves robustness.
+  on its own (see also the "Using watchdogs (SAFE)" chapter), but taking
+  proper measures here to halt execution improves robustness.
 
 
 
@@ -207,3 +207,23 @@ milliseconds on larger MCUs.
 Note that ROM and RAM tests are also performed during runtime, these routines
 only ensure that the application doesn't start at all if either the ROM or the
 RAM has a fault.
+
+
+Using a watchdog with short timeout
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If your design involves a watchdog which has a relatively short timeout even
+during init, and it resets the processor (not the critical outputs or the
+controlled process only), you might need to split up ROM CRC calculation on
+larger devices.
+
+You can enable this by setting the XMB_CRC_SPLIT nonzero. This case the CRC
+calculation will include xmb_run() calls after every 64 Kbytes (if your binary
+size is a multiple of 64 Kbytes, then after the last byte, too), which may
+reset the watchdog (see "Using watchdogs (SAFE)"). Note that you will need to
+call xmb_init() before xmb_crc_isromok() this case.
+
+Note that this design is not recommended as guarding the initialization
+routine is recommended by a watchdog which usually implies a longer timeout.
+If absolutely necessary, using xmb_run() to reset the watchdog during init is
+recommended.

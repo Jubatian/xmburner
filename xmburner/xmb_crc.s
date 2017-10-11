@@ -429,7 +429,15 @@ xmb_crc_isromok:
 xmb_crc_isromok_l:
 
 #if (PROGMEM_SIZE > (64 * 1024))
+#if (XMB_CRC_SPLIT == 0)
 	elpm  r0,      Z+
+#else
+	in    XL,      RAMPZ   ; Split CRC calculation:
+	elpm  r0,      Z+      ; Call xmb_run after each 64K
+	in    XH,      RAMPZ   ; (this can be used when a watchdog's timeout
+	cpse  XL,      XH      ; wouldn't permit running the whole CRC
+	call  xmb_run          ; calculation in a single block of operations)
+#endif
 #else
 	lpm   r0,      Z+
 #endif
