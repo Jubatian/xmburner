@@ -26,7 +26,23 @@
 .global xmb_init
 xmb_init:
 
+	; Call initialization guard routine
+	; This user-supplied function may be used to enforce an idle, safe
+	; state of the controlled process, that is, which is acceptable during
+	; system power up, and which can serve as a safety shut-down in case
+	; of entering init incorrectly. If by any condition the incorrect init
+	; can be detectable, it may also be attempted, and the function may
+	; halt the processor this case.
+
+	call  XMB_INIT_GUARD
+
 	; Initialization guard delay
+	; This delay serves for causing a watchdog time-out if a watchdog
+	; capable to povide such protection is added to the design. This
+	; capability demands a watchdog which has a longer power-up timeout
+	; than normal, and it is recommended to use one. Alternatively a
+	; watchog which can be initialized (such as the internal watchdog) may
+	; also be used with this feature.
 
 	ldi   r25,     XMB_INIT_DELAY
 	ldi   r24,     0
@@ -38,15 +54,6 @@ xmb_init:
 	brne  .-12             ; 256K cycles
 	dec   r25
 	brne  .-18             ; XMB_INIT_DELAY * 256K cycles
-
-	; Initialization guard notes:
-	; It is not really possible to use anything else here than a watchdog.
-	; The initial state of the RAM is undefined, if the system is
-	; power-cycled (or suffers a brownout), it might still contain
-	; previous values, and it might be desirable depending on the
-	; application to start up proper from this condition. It is so not
-	; possible to rely on guard values. In any sane design however during
-	; init watchdogs should still be uninitialized or timed out.
 
 	; Initialize components which require initialization
 
@@ -68,6 +75,11 @@ xmb_init:
 	st    Z+,      r25
 	ldi   r25,     0x00
 	sts   xmb_glob_next, r25
+
+	; Call initialization guard again. This provides protection against an
+	; unintended jump to within the init routine.
+
+	call  XMB_INIT_GUARD
 
 	ret
 

@@ -46,8 +46,10 @@ Hardware environment
 
 - SAFE: An external watchdog is recommended which can either be armed by a
   specific command or has a significantly longer timeout on power-up than
-  in normal operation. This is required for properly guarding XMBurner's init
-  routine.
+  in normal operation. This is recommneded for properly guarding XMBurner's
+  init routine. It is desirable if the watchdog could keep the processor in
+  reset instead of restarting it by a pulse (if XMBurner detects an anomaly,
+  the processor should no longer be permitted to perform any control).
 
 
 
@@ -114,7 +116,7 @@ ensuring robustness against the already detected failure.
 
 
 
-Using watchdogs
+Using watchdogs (SAFE)
 ------------------------------------------------------------------------------
 
 
@@ -137,7 +139,7 @@ any fault (including faults of its execution chain which is broken by any
 detected fault).
 
 
-Initialization guard
+Guarding initialization with a Watchdog
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The watchdog(s) also serve for guarding the initialization routine of
@@ -150,6 +152,25 @@ the normal timeout of the watchdog. This ensures that if the initialization
 routine is executed for any reason during normal operation, it can not
 complete without the watchdog timing out (assuming that at least the
 instructions and registers performing this delay are still operational).
+
+
+Guarding initialization with a routine
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The XMB_INIT_GUARD definition could be used to set up a routine which guards
+the initialization routine. It could carry out the following tasks:
+
+- Set the outputs to a safe initial state, ensuring that the controlled
+  process returns to an acceptable safe state if the initialization routine is
+  re-entered.
+
+- Attempt to detect a false initialization if there is any condition which
+  could be used for this purpose. On detecting such a condition, it may halt
+  the processor.
+
+Using this guard function properly can make the system more robust against
+processor faults, but it may not be as efficient in this task like the
+recommended watchdog.
 
 
 

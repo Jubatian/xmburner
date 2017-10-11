@@ -41,12 +41,24 @@
 
 /*
 ** Initialization delay in 256K cycle units. Set it up so the watchdog
-** mechanisms guarding your application time out during it, ensuring that the
+** mechanisms guarding your application time out during it (if you have a
+** watchdog capable of this which is recommended), ensuring that the
 ** initialization (xmb_init) can not finish without a watchdog alerting if it
 ** is recalled in any manner during program execution.
 */
 #ifndef XMB_INIT_DELAY
-#define XMB_INIT_DELAY 16
+#define XMB_INIT_DELAY 4
+#endif
+
+
+/*
+** Address of initialization guard routine. This function should reset the
+** application controlled process to a safe default state, and if there is
+** any condition by which a false init can be detected, that should be checked
+** and reacted here. The default implementation does nothing.
+*/
+#ifndef XMB_INIT_GUARD
+#define XMB_INIT_GUARD xmb_init_guard_default
 #endif
 
 

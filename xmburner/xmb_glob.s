@@ -105,3 +105,12 @@ xmb_wdreset_default_nr:
 	ldi   r24,     0xFF
 	ldi   r25,     0xFF
 	jmp   XMB_FAULT
+
+
+
+;
+; Default initialization guard routine
+;
+.global xmb_init_guard_default
+xmb_init_guard_default:
+	ret
