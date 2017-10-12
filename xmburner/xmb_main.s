@@ -86,6 +86,19 @@ xmb_init:
 
 
 ;
+; Return next XMBurner component which will run on xmb_run().
+; uint8_t xmb_next(void);
+;
+.global xmb_next
+xmb_next:
+
+	lds   r24,     xmb_glob_next
+	clr   r25
+	ret
+
+
+
+;
 ; Main runner.
 ; void xmb_run(void);
 ;
@@ -144,11 +157,14 @@ xmb_run:
 #endif
 	ijmp
 
+
+
 ;
 ; 128 entry jump table to the various tests, aligned to 512b boundary.
 ; The 0x00 padding is a nop slide, even if the "ijmp" above fails, the first
 ; test will be started.
 ;
+.section .text.xmb_test_table
 .balign 512, 0x00
 xmb_test_table:
 
@@ -287,16 +303,3 @@ xmb_test_table:
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
-
-
-
-;
-; Return next XMBurner component which will run on xmb_run().
-; uint8_t xmb_next(void);
-;
-.global xmb_next
-xmb_next:
-
-	lds   r24,     xmb_glob_next
-	clr   r25
-	ret
