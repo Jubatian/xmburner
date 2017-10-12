@@ -78,11 +78,12 @@
 /*
 ** Section to place XMBurner ROM data tables within. This section must
 ** entirely reside in the lower 64 KBytes as these tables are accessed with
-** LPM instructions.
+** LPM instructions. The .progmem section is normally available especially for
+** this purpose.
 */
 
 #ifndef XMB_RO64_SECTION
-#define XMB_RO64_SECTION .text
+#define XMB_RO64_SECTION .progmem
 #endif
 
 

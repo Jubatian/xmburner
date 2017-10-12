@@ -78,13 +78,13 @@ library's functions to C modules.
 Sections
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It is possible to use XMBurner without defining sections if the application
-binary size is below 64 KBytes size, but it is recommended to set up sections
-for both DIAG and SAFE applications.
+It is possible to use XMBurner without defining sections, but it is
+recommended to set up sections for both DIAG and SAFE applications.
 
 - XMB_RO64_SECTION: This definition should be pointed to a section which
   covers the low 64 KBytes of the ROM. It is used for certain data tables
-  which can only be accessed in this region.
+  which can only be accessed in this region. By default this is the .progmem
+  section which serves especially this purpose.
 
 - XMB_JUMP_SECTION: This definition should be pointed to 64 words before the
   largest valid power of 2 address of the ROM. This ensures that the jump
