@@ -64,6 +64,10 @@ link its modules. For normal Makefiles, the xmb_defs.mk and xmb_ruls.mk files
 may be included with an appropriate configuration to assist building and
 linking.
 
+When including the xmb_defs.mk file, definition overrides should be added to
+the XMB_CFLAGS variable as appropriate after this inclusion, such as for
+example "-DXMB_INIT_GUARD my_guard_routine" to specify an init guard routine.
+
 The XMBurner sources are all assembler, can be compiled with the avr-gcc
 compiler package or a compatible assembler to that within this. They use C
 preprocessor directives, so preprocessing is required (using the supplied
@@ -81,10 +85,15 @@ Sections
 It is possible to use XMBurner without defining sections, but it is
 recommended to set up sections for both DIAG and SAFE applications.
 
-- XMB_RO64_SECTION: This definition should be pointed to a section which
-  covers the low 64 KBytes of the ROM. It is used for certain data tables
-  which can only be accessed in this region. By default this is the .progmem
-  section which serves especially this purpose.
+- XMB_RO64_SECTION: This definition may be pointed to a section which covers
+  the low 64 KBytes of the ROM. It is used for certain data tables which can
+  only be accessed in this region. By default this is the .progmem section
+  which serves especially this purpose.
+
+- XMB_COMP_SECTION: If desired, this section may be pointed to a specific
+  section where non-public XMBurner components should reside. You can share
+  it with XMB_JUMP_SECTION if the linker preserves the order of objects passed
+  on the command line for linking.
 
 - XMB_JUMP_SECTION: This definition should be pointed to 64 words before the
   largest valid power of 2 address of the ROM. This ensures that the jump

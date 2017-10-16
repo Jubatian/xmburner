@@ -21,7 +21,7 @@
 #include "xmb_defs.h"
 
 
-.section .text
+.section XMB_COMP_SECTION
 
 
 .set exec_id_from, 0x4D1CA36B

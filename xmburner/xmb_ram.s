@@ -44,7 +44,7 @@ xmb_ram_ptrs:
 	.space 2 + 2
 
 
-.section .text
+.section XMB_COMP_SECTION
 
 
 .set exec_id_from, 0x4186EF39
@@ -532,6 +532,10 @@ xmb_ram_init:
 
 
 
+.section .text
+
+
+
 ;
 ; Checks entire RAM
 ;
@@ -556,7 +560,7 @@ xmb_ram_isramok:
 
 xmb_ram_isramok_l:
 
-	rcall xmb_ram_celltest
+	call  xmb_ram_celltest
 	cpi   r23,     0x00
 	brne  xmb_ram_isramok_f
 

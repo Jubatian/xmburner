@@ -44,7 +44,7 @@ xmb_crc_pos:
 #endif
 
 
-.section .text
+.section XMB_COMP_SECTION
 
 
 .set exec_id_from, 0xA9F105DB
@@ -187,7 +187,7 @@ xmb_crc_dlp:
 	; Table CRC calculation
 
 	movw  r14,     ZL      ; Preserve Z pointer
-	rcall xmb_crc_calc
+	call  xmb_crc_calc
 	movw  ZL,      r14
 
 	; Compare results (must be same)
@@ -342,6 +342,10 @@ xmb_crc_init:
 	st    Z+,      r24
 #endif
 	ret
+
+
+
+.section .text
 
 
 

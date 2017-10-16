@@ -46,6 +46,7 @@
 ** initialization (xmb_init) can not finish without a watchdog alerting if it
 ** is recalled in any manner during program execution.
 */
+
 #ifndef XMB_INIT_DELAY
 #define XMB_INIT_DELAY 4
 #endif
@@ -57,8 +58,22 @@
 ** any condition by which a false init can be detected, that should be checked
 ** and reacted here. The default implementation does nothing.
 */
+
 #ifndef XMB_INIT_GUARD
 #define XMB_INIT_GUARD xmb_init_guard_default
+#endif
+
+
+/*
+** Section to place non-public xmburner components within. This section may
+** be used to move these components away from the low 128K if the application
+** prevers to be there. If XMB_JUMP_SECTION is set the same as this section,
+** and the linker sorts code by input order, the xmb_jump component will be
+** the first, so compiling that way also works.
+*/
+
+#ifndef XMB_COMP_SECTION
+#define XMB_COMP_SECTION .text
 #endif
 
 
@@ -71,7 +86,7 @@
 */
 
 #ifndef XMB_JUMP_SECTION
-#define XMB_JUMP_SECTION .text
+#define XMB_JUMP_SECTION XMB_COMP_SECTION
 #endif
 
 

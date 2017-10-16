@@ -47,11 +47,11 @@ XMB_BIN = $(XMB_OPATH)/_xmb_b_
 
 ## XMBurner objects (can be used as dependency and source for linking)
 
-XMB_OBJECTS  = $(XMB_OBJ)/xmb_glob.o
+XMB_OBJECTS  = $(XMB_OBJ)/xmb_jump.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_glob.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_main.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_creg.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_cond.o
-XMB_OBJECTS += $(XMB_OBJ)/xmb_jump.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_crc.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_ram.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_log.o

@@ -19,7 +19,7 @@
 #include "xmb_defs.h"
 
 
-.section .text
+.section XMB_COMP_SECTION
 
 
 .set exec_id_from, 0x76F3D0AE
