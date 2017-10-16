@@ -25,7 +25,7 @@
 ; on both the ATMega and ATXMega families), which is restored. Interrupts are
 ; allowed to use GPIOR0 (the tests are guarded proper for this).
 ;
-; Interrupts are disabled for up to 8 cycle periods during the test.
+; Interrupts are disabled for up to 9 cycle periods during the test.
 ;
 
 #include "xmb_defs.h"
@@ -349,11 +349,11 @@ xmb_cond_sbi1:
 	; instructions accordingly. Interrupts are disabled for the test to
 	; preserve GPIOR0's state.
 
-	in    r0,      GP0_IO  ; Save GPIOR0 state
 	in    r1,      SR_IO   ; Save SREG state with whatever 'I' flag it has
 
 	ldi   r16,     0x01
 	cli                    ; Interrupts disabled
+	in    r0,      GP0_IO  ; Save GPIOR0 state
 	out   GP0_IO,  r16
 	sbic  GP0_IO,  0
 	rjmp  .+2
@@ -363,9 +363,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x02
+	ldi   r19,     0x02
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r19
 	sbic  GP0_IO,  1
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -374,9 +375,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x04
+	ldi   r21,     0x04
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r21
 	sbic  GP0_IO,  2
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -385,9 +387,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x08
+	ldi   ZH,      0x08
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  ZH
 	sbic  GP0_IO,  3
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -396,9 +399,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x10
+	ldi   r17,     0x10
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r17
 	sbic  GP0_IO,  4
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -407,9 +411,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x20
+	ldi   r18,     0x20
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r18
 	sbic  GP0_IO,  5
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -418,9 +423,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x40
+	ldi   YL,      0x40
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  YL
 	sbic  GP0_IO,  6
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -429,9 +435,10 @@ xmb_cond_sbi1:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x80
+	ldi   r20,     0x80
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r20
 	sbic  GP0_IO,  7
 	rjmp  .+2
 	rjmp  xmb_cond_fault_04
@@ -452,12 +459,12 @@ xmb_cond_sbi0:
 	; instructions accordingly. Interrupts are disabled for the test to
 	; preserve GPIOR0's state.
 
-	in    r0,      GP0_IO  ; Save GPIOR0 state
 	in    r1,      SR_IO   ; Save SREG state with whatever 'I' flag it has
 
-	ldi   r16,     0xFE
+	ldi   r25,     0xFE
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r25
 	sbis  GP0_IO,  0
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -466,9 +473,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xFD
+	ldi   XL,      0xFD
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  XL
 	sbis  GP0_IO,  1
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -477,9 +485,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xFB
+	ldi   r22,     0xFB
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r22
 	sbis  GP0_IO,  2
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -488,9 +497,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xF7
+	ldi   r24,     0xF7
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r24
 	sbis  GP0_IO,  3
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -499,9 +509,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xEF
+	ldi   YH,      0xEF
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  YH
 	sbis  GP0_IO,  4
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -510,9 +521,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xDF
+	ldi   r23,     0xDF
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  r23
 	sbis  GP0_IO,  5
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -521,9 +533,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0xBF
+	ldi   XH,      0xBF
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  XH
 	sbis  GP0_IO,  6
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
@@ -532,9 +545,10 @@ xmb_cond_sbi0:
 	out   GP0_IO,  r0
 	out   SR_IO,   r1      ; Restore SREG with whatever 'I' flag it had
 
-	ldi   r16,     0x7F
+	ldi   ZL,      0x7F
 	cli                    ; Interrupts disabled
-	out   GP0_IO,  r16
+	in    r0,      GP0_IO  ; Save GPIOR0 state
+	out   GP0_IO,  ZL
 	sbis  GP0_IO,  7
 	rjmp  .+2
 	rjmp  xmb_cond_fault_05
