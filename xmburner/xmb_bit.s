@@ -67,7 +67,7 @@ xmb_bit:
 
 xmb_bit_fault_ff:
 	ldi   r24,     0xFF
-	ldi   r25,     0x09
+	ldi   r25,     0x0A
 	jmp   XMB_FAULT
 
 xmb_bit_cbi:
@@ -286,25 +286,25 @@ xmb_bit_bld:
 
 	ldi   ZL,      0x01
 	ldi   ZH,      0xFE
-	movw  r0,      r16
+	movw  r0,      ZL
 	ldi   YL,      0x02
 	ldi   YH,      0xFD
-	movw  r2,      r16
+	movw  r2,      YL
 	ldi   XL,      0x04
 	ldi   XH,      0xFB
-	movw  r4,      r16
+	movw  r4,      XL
 	ldi   r24,     0x08
 	ldi   r25,     0xF7
-	movw  r6,      r16
+	movw  r6,      r24
 	ldi   r22,     0x10
 	ldi   r23,     0xEF
-	movw  r8,      r16
+	movw  r8,      r22
 	ldi   r20,     0x20
 	ldi   r21,     0xDF
-	movw  r10,     r16
+	movw  r10,     r20
 	ldi   r18,     0x40
 	ldi   r19,     0xBF
-	movw  r12,     r16
+	movw  r12,     r18
 	ldi   r16,     0x80
 	ldi   r17,     0x7F
 	movw  r14,     r16
