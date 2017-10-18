@@ -236,3 +236,34 @@ Note that this design is not recommended as guarding the initialization
 routine is recommended by a watchdog which usually implies a longer timeout.
 If absolutely necessary, using xmb_run() to reset the watchdog during init is
 recommended.
+
+
+
+
+Notes on DMA usage
+------------------------------------------------------------------------------
+
+
+Some XMega chips contain DMA hardware which is capable to move data between
+memory and peripherals without active CPU intervention.
+
+Using DMA together with XMBurner implies complications as the DMA accesses can
+not be predicted in a system where DMA transactions are enabled. Such accesses
+conflict with the RAM test, and may cause either corrupted peripheral writes
+or false alarms on the RAM test.
+
+The following workarounds may apply:
+
+- Don't use DMA. This is the simplest solution if the system's architecture
+  permits it (there are no tasks requiring high bandwidth).
+
+- Time DMA transactions so they don't conflict with xmb_run(). This solution
+  is workable for transmit type transactions which are started by user code
+  and their runtime is deterministic.
+
+It is not possible to use XMBurner with receive type transactions which are
+completely asynchronous to the running user code and calls to xmb_run(). It
+would be possible to disable DMA for xmb_run() calls, but such high bandwidth
+usage which would require using the DMA (instead of a normal interrupt)
+wouldn't permit the approximately 10K cycle disable periods which xmb_run()
+calls may impose.
