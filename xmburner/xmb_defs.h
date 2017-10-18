@@ -155,7 +155,7 @@
 ** Count of XMBurner components (iterated during xmb_run()).
 */
 
-#define XMB_COMPONENT_COUNT 0x0A
+#define XMB_COMPONENT_COUNT 0x0B
 
 
 /*
@@ -174,3 +174,4 @@
 #define XMB_FID_CNT_ADD   2
 #define XMB_FID_CNT_ALEX  7
 #define XMB_FID_CNT_WOPS  3
+#define XMB_FID_CNT_BIT   4

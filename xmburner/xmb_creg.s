@@ -28,7 +28,7 @@
 .section XMB_COMP_SECTION
 
 
-.set exec_id_from, 0x0AB18F43
+.set exec_id_from, 0xD5F049E6
 .set exec_id,      0xE0D43BA5
 
 .set SR_IO,  _SFR_IO_ADDR(SREG)
