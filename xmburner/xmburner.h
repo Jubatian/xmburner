@@ -75,7 +75,7 @@ void     xmb_crc_genram(void* addr, uint16_t len);
 ** Checks CRC-32 for a RAM region. The CRC-32 is assumed to be the last 4
 ** bytes of this region.
 */
-_Bool    xmb_crc_isramok(void* addr, uint16_t len);
+_Bool    xmb_crc_isramok(void const* addr, uint16_t len);
 
 
 #endif
