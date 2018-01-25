@@ -30,9 +30,13 @@
 .set exec_id_from, 0x849AB017
 .set exec_id,      0xA9F105DB
 
-.set SR_IO,  _SFR_IO_ADDR(SREG)
-.set SPL_IO, _SFR_IO_ADDR(SPL)
-.set SPH_IO, _SFR_IO_ADDR(SPH)
+.set SR_IO,   _SFR_IO_ADDR(SREG)
+.set SPL_IO,  _SFR_IO_ADDR(SPL)
+.set SPH_IO,  _SFR_IO_ADDR(SPH)
+#ifdef EIND
+.set EIND_IO, _SFR_IO_ADDR(EIND)
+#endif
+
 
 
 .global xmb_jump
@@ -98,7 +102,7 @@ xmb_jump_branch:
 	ldi   ZH,      hi8(pm(xmb_jump_fault_00))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_jump_fault_00))
-	out   EIND,    r20
+	out   EIND_IO, r20
 #endif
 	in    r23,     SR_IO
 	ori   r23,     0x7F    ; All flags expect 'I' set (which is left as-is)
@@ -197,7 +201,7 @@ xmb_jump_branch1:
 	ldi   ZH,      hi8(pm(xmb_jump_fault_01))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_jump_fault_01))
-	out   EIND,    r20
+	out   EIND_IO, r20
 #endif
 	in    r23,     SR_IO
 	andi  r23,     0x80    ; All flags expect 'I' set (which is left as-is)
@@ -304,7 +308,7 @@ xmb_jump_rjump:
 	ldi   ZH,      hi8(pm(xmb_jump_fault_02))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_jump_fault_02))
-	out   EIND,    r20
+	out   EIND_IO, r20
 #endif
 	ldi   YL,      0x80    ; Guard value
 	ldi   XL,      0x80    ; Guard value
@@ -414,7 +418,7 @@ xmb_jump_rjump1:
 	ldi   ZH,      hi8(pm(xmb_jump_fault_03))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_jump_fault_03))
-	out   EIND,    r20
+	out   EIND_IO, r20
 #endif
 	in    r24,     SPL_IO
 	in    r25,     SPH_IO  ; Stack pointer start value to compare with
@@ -523,7 +527,7 @@ xmb_jump_rjump2:
 	ldi   ZH,      hi8(pm(xmb_jump_fault_04))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_jump_fault_04))
-	out   EIND,    r20
+	out   EIND_IO, r20
 #endif
 	in    r24,     SPL_IO
 	in    r25,     SPH_IO  ; Stack pointer start value to compare with

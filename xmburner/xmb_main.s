@@ -153,7 +153,7 @@ xmb_run:
 	ldi   ZH,      hi8(pm(xmb_test_table))
 #ifdef EIND
 	ldi   r20,     hh8(pm(xmb_test_table))
-	out   EIND,    r20
+	out   _SFR_IO_ADDR(EIND), r20
 #endif
 	ijmp
 
