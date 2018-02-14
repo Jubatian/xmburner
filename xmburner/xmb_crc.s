@@ -50,6 +50,9 @@ xmb_crc_pos:
 .set exec_id_from, 0xA9F105DB
 .set exec_id,      0x4186EF39
 
+#if (PROGMEM_SIZE > (64 * 1024))
+.set RPZ_IO, _SFR_IO_ADDR(RAMPZ)
+#endif
 
 
 .global xmb_crc
@@ -99,7 +102,7 @@ xmb_crc_ccalc:
 	ldi   ZH,      hi8(XMB_BSIZE)
 #if (PROGMEM_SIZE > (64 * 1024))
 	ldi   r20,     hh8(XMB_BSIZE)
-	out   RAMPZ,   r20
+	out   RPZ_IO,  r20
 	elpm  r10,     Z+
 	elpm  r11,     Z+
 	elpm  r12,     Z
@@ -132,7 +135,7 @@ xmb_crc_ccalc:
 	com   r24
 	cpse  r20,     r24
 	rjmp  xmb_crc_fault_00
-	out   RAMPZ,   r20     ; Set up extended
+	out   RPZ_IO,  r20     ; Set up extended
 #endif
 
 	; Load CRC value
@@ -213,7 +216,7 @@ xmb_crc_dlp:
 	ld    r17,     X+      ; High
 #if (PROGMEM_SIZE > (64 * 1024))
 	ld    r18,     X+      ; Extended
-	in    r20,     RAMPZ
+	in    r20,     RPZ_IO
 #endif
 	subi  r16,     0xC0    ; Add 64 (0x40)
 	sbci  r17,     0xFF
@@ -403,7 +406,7 @@ xmb_crc_isromok:
 	ldi   ZH,      hi8(XMB_BSIZE)
 #if (PROGMEM_SIZE > (64 * 1024))
 	ldi   r20,     hh8(XMB_BSIZE)
-	out   RAMPZ,   r20
+	out   RPZ_IO,  r20
 	elpm  r18,     Z+
 	elpm  r19,     Z+
 	elpm  r20,     Z
@@ -417,7 +420,7 @@ xmb_crc_isromok:
 	ldi   ZL,      0
 	ldi   ZH,      0
 #if (PROGMEM_SIZE > (64 * 1024))
-	out   RAMPZ,   ZH
+	out   RPZ_IO,  ZH
 #endif
 
 	; Start CRC value (0xFFFFFFFF)
@@ -436,9 +439,9 @@ xmb_crc_isromok_l:
 #if (XMB_CRC_SPLIT == 0)
 	elpm  r0,      Z+
 #else
-	in    XL,      RAMPZ   ; Split CRC calculation:
+	in    XL,      RPZ_IO  ; Split CRC calculation:
 	elpm  r0,      Z+      ; Call xmb_run after each 64K
-	in    XH,      RAMPZ   ; (this can be used when a watchdog's timeout
+	in    XH,      RPZ_IO  ; (this can be used when a watchdog's timeout
 	cpse  XL,      XH      ; wouldn't permit running the whole CRC
 	call  xmb_run          ; calculation in a single block of operations)
 #endif
@@ -467,7 +470,7 @@ xmb_crc_isromok_l:
 	cpse  ZH,      r19
 	rjmp  xmb_crc_isromok_l
 #if (PROGMEM_SIZE > (64 * 1024))
-	in    r0,      RAMPZ
+	in    r0,      RPZ_IO
 	cpse  r0,      r20
 	rjmp  xmb_crc_isromok_l
 #endif
