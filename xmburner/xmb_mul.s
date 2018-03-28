@@ -925,7 +925,13 @@ xmb_mul_sw_mul_com:
 	sbrc  r22,     7
 	adc   r21,     r25
 
-	sec                    ; Z flag correctly set, C flag by bit 15
+	ldi   r24,     0
+	sez                    ; Z flag by result
+	cpse  r20,     r24
+	clz
+	cpse  r21,     r24
+	clz
+	sec                    ; C flag by bit 15
 	sbrs  r21,     7
 	clc
 

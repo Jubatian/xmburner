@@ -1,7 +1,7 @@
 ;
 ; XMBurner - main logic
 ;
-; Copyright (C) 2017 Sandor Zsuga (Jubatian)
+; Copyright (C) 2018 Sandor Zsuga (Jubatian)
 ;
 ; This Source Code Form is subject to the terms of the Mozilla Public
 ; License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,14 +59,15 @@ xmb_init:
 
 	call  xmb_crc_init
 	call  xmb_ram_init
+	call  xmb_mul_init
 
 	; Initialize execution chain to first component (xmb_creg)
 	; Note: this is the exec_id_from value in xmb_creg.s
 
-	ldi   r25,     0xD5
-	ldi   r24,     0xF0
-	ldi   r23,     0x49
-	ldi   r22,     0xE6
+	ldi   r25,     0x9A
+	ldi   r24,     0x00
+	ldi   r23,     0xC4
+	ldi   r22,     0x7E
 	ldi   ZL,      lo8(xmb_glob_chain)
 	ldi   ZH,      hi8(xmb_glob_chain)
 	st    Z+,      r22
@@ -179,7 +180,7 @@ xmb_test_table:
 	jmp   xmb_alex
 	jmp   xmb_wops
 	jmp   xmb_bit
-	jmp   XMB_FAULT
+	jmp   xmb_mul
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT

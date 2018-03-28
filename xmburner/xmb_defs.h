@@ -1,7 +1,7 @@
 /*
 ** XMBurner - main definitions
 **
-** Copyright (C) 2017 Sandor Zsuga (Jubatian)
+** Copyright (C) 2018 Sandor Zsuga (Jubatian)
 **
 ** This Source Code Form is subject to the terms of the Mozilla Public
 ** License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -155,7 +155,7 @@
 ** Count of XMBurner components (iterated during xmb_run()).
 */
 
-#define XMB_COMPONENT_COUNT 0x0B
+#define XMB_COMPONENT_COUNT 0x0C
 
 
 /*
@@ -175,3 +175,4 @@
 #define XMB_FID_CNT_ALEX  7
 #define XMB_FID_CNT_WOPS  3
 #define XMB_FID_CNT_BIT   4
+#define XMB_FID_CNT_MUL   6
