@@ -608,7 +608,7 @@ xmb_mul_test:
 	rjmp  xmb_mul_fault_00
 
 	rcall xmb_mul_prep_muls
-	mov   r23,     r22
+	mov   r23,     r24
 	mov   r18,     r22
 	muls  r23,     r18
 	rcall xmb_mul_test_muls
