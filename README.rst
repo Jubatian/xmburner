@@ -33,9 +33,10 @@ Possible use cases:
 - Runtime checking correct operation of autonomous AVR microcontroller based
   systems operating for extended periods.
 
-Currently the project is under development, not being suitable to serve these
-goals in its present form. However it is already approaching completion, so it
-may be useful to experiment with it.
+Currently the project is under development, however it is mostly complete,
+already testing almost all instructions of an AVR ALU adequately (see
+coverage_report.rst). The interface should be stable. You can start using it
+in your projects.
 
 
 
@@ -81,5 +82,6 @@ report (coverage_report.rst) which describes what CPU components the library
 covers. Notably instructions which have no coverage currently will receive
 test modules in the future.
 
-Usage as a library is possible, but the interface may still change. You may
-check out the UzeBurn project for an example of how the library could be used.
+Usage as a library is possible, the interface should be already stable. You
+may check out the UzeBurn project for an example of how the library could be
+used in a realtime environment.

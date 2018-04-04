@@ -31,6 +31,25 @@
 xmb_mul_rval:
 	.space 2
 
+; Start value and multiplier / multiplicand adjusts for MULS, MULSU, FMUL,
+; FMULS and FMULSU. These are set up so all the six instructions (MUL included
+; which has no adjustment) generate both Z and C flag sets and clears, and
+; they offer a decent operand coverage in the first pass of the test. This
+; ensures a more likely detection of a permanent failure of the chip in the
+; first XMBurner pass.
+
+.set prng_start,   0x69A0
+.set muls_adj_h,   0x32
+.set muls_adj_l,   0x45
+.set mulsu_adj_h,  0xAF
+.set mulsu_adj_l,  0x11
+.set fmul_adj_h,   0x03
+.set fmul_adj_l,   0xCF
+.set fmuls_adj_h,  0xE9
+.set fmuls_adj_l,  0xA1
+.set fmulsu_adj_h, 0x37
+.set fmulsu_adj_l, 0x40
+
 
 .section XMB_COMP_SECTION
 
@@ -680,36 +699,36 @@ xmb_mul_prep_mul:
 xmb_mul_prep_muls:
 	mov   r24,     r2
 	mov   r22,     r3
-	subi  r24,     0x55
-	subi  r22,     0xAA
+	subi  r24,     muls_adj_l
+	subi  r22,     muls_adj_h
 	ret
 
 xmb_mul_prep_mulsu:
 	mov   r24,     r2
 	mov   r22,     r3
-	subi  r24,     0x99
-	subi  r22,     0x66
+	subi  r24,     mulsu_adj_l
+	subi  r22,     mulsu_adj_h
 	ret
 
 xmb_mul_prep_fmul:
 	mov   r24,     r2
 	mov   r22,     r3
-	subi  r24,     0xCC
-	subi  r22,     0x88
+	subi  r24,     fmul_adj_l
+	subi  r22,     fmul_adj_h
 	ret
 
 xmb_mul_prep_fmuls:
 	mov   r24,     r2
 	mov   r22,     r3
-	subi  r24,     0x1F
-	subi  r22,     0xF1
+	subi  r24,     fmuls_adj_l
+	subi  r22,     fmuls_adj_h
 	ret
 
 xmb_mul_prep_fmulsu:
 	mov   r24,     r2
 	mov   r22,     r3
-	subi  r24,     0x69
-	subi  r22,     0x96
+	subi  r24,     fmulsu_adj_l
+	subi  r22,     fmulsu_adj_h
 	ret
 
 
@@ -843,9 +862,9 @@ xmb_mul_fault_05:
 xmb_mul_init:
 	ldi   ZL,      lo8(xmb_mul_rval)
 	ldi   ZH,      hi8(xmb_mul_rval)
-	ldi   r24,     0x49
+	ldi   r24,     lo8(prng_start)
 	st    Z+,      r24
-	ldi   r24,     0x9B
+	ldi   r24,     hi8(prng_start)
 	st    Z+,      r24
 	ret
 
