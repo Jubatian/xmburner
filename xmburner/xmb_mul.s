@@ -18,6 +18,8 @@
 ; Performs a complete test covering all possible input combinations, so it can
 ; detect failures regardless of the implementation of the multiplier.
 ;
+; Needs initialization (xmb_mul_init).
+;
 ; Interrupts are enabled after this component (it also doesn't disable them).
 ;
 
