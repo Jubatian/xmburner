@@ -61,6 +61,7 @@ XMB_OBJECTS += $(XMB_OBJ)/xmb_alex.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_wops.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_bit.o
 XMB_OBJECTS += $(XMB_OBJ)/xmb_mul.o
+XMB_OBJECTS += $(XMB_OBJ)/xmb_absa.o
 
 ## crchex tool (can be used as dependency or command)
 
