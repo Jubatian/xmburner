@@ -13,6 +13,14 @@
 
 
 /*
+** Version number. The current convention is using the date of commit in a
+** Binary Coded Decimal 32 bit YYYYMMDD format. Note that the version is also
+** compiled in the library, you can query it by xmb_version().
+*/
+#define XMB_VERSION_ID 0x20180425
+
+
+/*
 ** Address of fault routine, jumped to when XMBurner detects a fault. It takes
 ** a single 16 bit parameter in r25:r24 identifying the cause.
 **

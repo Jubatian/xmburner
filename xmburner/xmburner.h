@@ -18,6 +18,13 @@
 
 
 /*
+** Query version number. Returns the version number of the library. See
+** XMB_VERSION_ID in xmb_defs.h for further information.
+*/
+uint32_t xmb_version(void);
+
+
+/*
 ** Initializes the ALU tester. Note that it takes a long time (ideally more
 ** than the timeout of all watchdogs used in the application, see
 ** XMB_INIT_DELAY).

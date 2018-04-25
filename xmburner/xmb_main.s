@@ -16,6 +16,24 @@
 
 
 ;
+; Query version number.
+; uint32_t xmb_version(void);
+;
+; Returns the version number of the library. See XMB_VERSION_ID in xmb_defs.h
+; for further information.
+;
+.global xmb_version
+xmb_version:
+
+	ldi   r25,     (XMB_VERSION_ID >> 24) & 0xFF
+	ldi   r24,     (XMB_VERSION_ID >> 16) & 0xFF
+	ldi   r23,     (XMB_VERSION_ID >>  8) & 0xFF
+	ldi   r22,     (XMB_VERSION_ID      ) & 0xFF
+	ret
+
+
+
+;
 ; Initialize.
 ; void xmb_init(void);
 ;

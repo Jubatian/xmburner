@@ -33,10 +33,12 @@ Possible use cases:
 - Runtime checking correct operation of autonomous AVR microcontroller based
   systems operating for extended periods.
 
-Currently the project is under development, however it is mostly complete,
-already testing almost all instructions of an AVR ALU adequately (see
-coverage_report.rst). The interface should be stable. You can start using it
-in your projects.
+The project is mostly completed, its interface should be stable. The current
+self-test coverage can be observed in coverage_report.rst. Interface
+documentations are accessible in the C headers provided in the xmburner
+directory and application_manual.rst. You may use UzeBurn (see below in
+Related components) as an example on how the library could be used in a real
+time environment.
 
 
 
@@ -70,18 +72,3 @@ The project relies on two other components:
 
 All of these components are published under GNU General Public License
 version 3. They are not needed for implementing products using XMBurner.
-
-
-
-Stage of development
-------------------------------------------------------------------------------
-
-
-The most important indication of the stage of development is the coverage
-report (coverage_report.rst) which describes what CPU components the library
-covers. Notably instructions which have no coverage currently will receive
-test modules in the future.
-
-Usage as a library is possible, the interface should be already stable. You
-may check out the UzeBurn project for an example of how the library could be
-used in a realtime environment.
