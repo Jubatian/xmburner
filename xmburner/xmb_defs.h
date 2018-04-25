@@ -166,7 +166,7 @@
 
 #define XMB_FID_CNT_CREG  7
 #define XMB_FID_CNT_COND  7
-#define XMB_FID_CNT_JUMP  6
+#define XMB_FID_CNT_JUMP  7
 #define XMB_FID_CNT_CRC   4
 #define XMB_FID_CNT_RAM   5
 #define XMB_FID_CNT_LOG   6

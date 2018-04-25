@@ -84,6 +84,11 @@ xmb_jump_rjump2c:
 	rcall xmb_jump_rjump2d
 	ijmp
 
+xmb_jump_icall0:
+
+	rjmp  xmb_jump_icall1  ; Part of icall test
+	rjmp  xmb_jump_fault_06
+
 xmb_jump_branch:
 
 	; Tests branch instruction range using always jumping branches. The
@@ -594,12 +599,50 @@ xmb_jump_skip:
 	cpse  r25,     r24
 	.word 0x95FF           ; CALL <address> opcode
 	rjmp  xmb_jump_fault_05
-	rjmp  xmb_jump_end
+	rjmp  xmb_jump_icall
 
 xmb_jump_fault_05:
 	ldi   r24,     0x05
 	ldi   r25,     0x02
 	jmp   XMB_FAULT
+
+xmb_jump_fault_06:
+	ldi   r24,     0x06
+	ldi   r25,     0x02
+	jmp   XMB_FAULT
+
+xmb_jump_icall:
+
+	; A coarse test on icall.
+
+	in    r24,     SPL_IO
+	in    r25,     SPH_IO  ; Stack pointer start value to compare with
+
+	ldi   ZL,      lo8(pm(xmb_jump_icall0))
+	ldi   ZH,      hi8(pm(xmb_jump_icall0))
+#ifdef EIND
+	ldi   r20,     hh8(pm(xmb_jump_icall0))
+	out   EIND_IO, r20
+#endif
+
+	icall
+	rjmp  xmb_jump_fault_06
+
+xmb_jump_icall1:
+
+	in    r23,     SPH_IO
+	in    r22,     SPL_IO  ; Get stack pointer after rcall pushes
+	out   SPH_IO,  r25
+	out   SPL_IO,  r24     ; Discard pushes from rcalls
+#if (PROGMEM_SIZE <= (128 * 1024))
+	sbiw  r24,     1 * 2   ; Stack usage corresponding to 1 icall
+#else
+	sbiw  r24,     1 * 3   ; Stack usage corresponding to 1 icall
+#endif
+	cpse  r24,     r22
+	rjmp  xmb_jump_fault_06
+	cpse  r25,     r23
+	rjmp  xmb_jump_fault_06
 
 xmb_jump_end:
 
@@ -627,3 +670,4 @@ xmb_jump_rjump2d:
 .global xmb_jump_branch
 .global xmb_jump_rjump
 .global xmb_jump_skip
+.global xmb_jump_icall
