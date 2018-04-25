@@ -26,7 +26,7 @@ Possible use cases:
   temperature and voltage ranges, high radiation levels).
 
 - Verifying system operation when operating out of specifications (such as
-  under overclocking).
+  under overclocking in some hobby hack project).
 
 - Verifying implementations of AVR architecture (emulators, FPGA cores).
 

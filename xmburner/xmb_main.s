@@ -64,10 +64,10 @@ xmb_init:
 	; Initialize execution chain to first component (xmb_creg)
 	; Note: this is the exec_id_from value in xmb_creg.s
 
-	ldi   r25,     0x9A
-	ldi   r24,     0x00
-	ldi   r23,     0xC4
-	ldi   r22,     0x7E
+	ldi   r25,     0xE4
+	ldi   r24,     0xD0
+	ldi   r23,     0x11
+	ldi   r22,     0x97
 	ldi   ZL,      lo8(xmb_glob_chain)
 	ldi   ZH,      hi8(xmb_glob_chain)
 	st    Z+,      r22
@@ -181,7 +181,7 @@ xmb_test_table:
 	jmp   xmb_wops
 	jmp   xmb_bit
 	jmp   xmb_mul
-	jmp   XMB_FAULT
+	jmp   xmb_absa
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
 	jmp   XMB_FAULT
