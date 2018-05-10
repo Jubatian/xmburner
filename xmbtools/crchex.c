@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2017 Sandor Zsuga (Jubatian)
+** Copyright (C) 2017 - 2018 Sandor Zsuga (Jubatian)
 **
 ** This Source Code Form is subject to the terms of the Mozilla Public
 ** License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -297,7 +297,7 @@ int main(int argc, char* argv[])
  if (argc < 3){
   printf("XMBurner HEX-CRC32 tool\n"
          "\n"
-         "Copyright Sandor Zsuga (Jubatian), 2017\n"
+         "Copyright Sandor Zsuga (Jubatian), 2017 - 2018\n"
          "Licensed under Mozilla Public License v 2.0\n"
          "\n"
          "crchex hexfile.hex size\n"
@@ -366,10 +366,13 @@ int main(int argc, char* argv[])
    switch (hline.type){
 
     case HEX_RT_ESEGA:
+
+     hoff = (hline.addr << 4);
+     break;
+
     case HEX_RT_SSEGA:
 
-     fprintf(stderr, "Error: Segmented 16 bit HEX files are not supported\n");
-     exit(1);
+     soff = ((hline.addr & 0xFFFF0000U) >> 12) + (hline.addr & 0xFFFFU);
      break;
 
     case HEX_RT_ELINA:
