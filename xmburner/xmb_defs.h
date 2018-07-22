@@ -17,7 +17,7 @@
 ** Binary Coded Decimal 32 bit YYYYMMDD format. Note that the version is also
 ** compiled in the library, you can query it by xmb_version().
 */
-#define XMB_VERSION_ID 0x20180425
+#define XMB_VERSION_ID 0x20180722
 
 
 /*

@@ -17,6 +17,8 @@
 ;
 ; Needs initialization (xmb_crc_init).
 ;
+; Interrupts are disabled for up to 12 cycle periods during the test.
+;
 ; Provides user accessible functions:
 ;
 ; - uint32_t xmb_crc_calc(uint32_t crcval, uint8_t byte);
@@ -37,10 +39,10 @@ xmb_crc_val:
 
 ; Current position in binary (2/3 bytes) and negated position (2/3 bytes)
 xmb_crc_pos:
-#if (PROGMEM_SIZE <= (64 * 1024))
-	.space 2 + 2
-#else
+#if (PROGMEM_SIZE > (64 * 1024))
 	.space 3 + 3
+#else
+	.space 2 + 2
 #endif
 
 
@@ -52,6 +54,7 @@ xmb_crc_pos:
 
 #if (PROGMEM_SIZE > (64 * 1024))
 .set RPZ_IO, _SFR_IO_ADDR(RAMPZ)
+.set SR_IO,  _SFR_IO_ADDR(SREG)
 #endif
 
 
@@ -102,10 +105,15 @@ xmb_crc_ccalc:
 	ldi   ZH,      hi8(XMB_BSIZE)
 #if (PROGMEM_SIZE > (64 * 1024))
 	ldi   r20,     hh8(XMB_BSIZE)
+	clr   r1
+	in    r0,      SR_IO   ; Save current SREG with whatever 'I' flag it has
+	cli                    ; Disable interrupts
 	out   RPZ_IO,  r20
 	elpm  r10,     Z+
 	elpm  r11,     Z+
 	elpm  r12,     Z
+	out   RPZ_IO,  r1
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
 #else
 	lpm   r10,     Z+
 	lpm   r11,     Z
@@ -118,7 +126,7 @@ xmb_crc_ccalc:
 	ld    ZL,      X+      ; Low
 	ld    ZH,      X+      ; High
 #if (PROGMEM_SIZE > (64 * 1024))
-	ld    r20,     X+      ; Extended
+	ld    r13,     X+      ; Extended
 #endif
 	ld    r22,     X+      ; Negated Low
 	ld    r23,     X+      ; Negated High
@@ -133,9 +141,8 @@ xmb_crc_ccalc:
 	rjmp  xmb_crc_fault_00
 #if (PROGMEM_SIZE > (64 * 1024))
 	com   r24
-	cpse  r20,     r24
+	cpse  r13,     r24
 	rjmp  xmb_crc_fault_00
-	out   RPZ_IO,  r20     ; Set up extended
 #endif
 
 	; Load CRC value
@@ -163,7 +170,14 @@ xmb_crc_ccalc:
 xmb_crc_clp:
 
 #if (PROGMEM_SIZE > (64 * 1024))
+	clr   r1
+	in    r0,      SR_IO   ; Save current SREG with whatever 'I' flag it has
+	cli                    ; Disable interrupts
+	out   RPZ_IO,  r13     ; Set up extended
 	elpm  r20,     Z+
+	in    r13,     RPZ_IO
+	out   RPZ_IO,  r1
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
 #else
 	lpm   r20,     Z+
 #endif
@@ -216,7 +230,6 @@ xmb_crc_dlp:
 	ld    r17,     X+      ; High
 #if (PROGMEM_SIZE > (64 * 1024))
 	ld    r18,     X+      ; Extended
-	in    r20,     RPZ_IO
 #endif
 	subi  r16,     0xC0    ; Add 64 (0x40)
 	sbci  r17,     0xFF
@@ -228,11 +241,11 @@ xmb_crc_dlp:
 	cpse  ZH,      r17
 	rjmp  xmb_crc_fault_03
 #if (PROGMEM_SIZE > (64 * 1024))
-	cpse  r20,     r18
+	cpse  r13,     r18
 	rjmp  xmb_crc_fault_03
 #endif
 
-	; If reached end of binary, check CRC value (must be 0xFFFFFFFF), and
+	; If reached end of binary, check CRC value (must be 0xDEBB20E3), and
 	; reset pointer.
 
 	cpse  ZL,      r10
@@ -240,7 +253,7 @@ xmb_crc_dlp:
 	cpse  ZH,      r11
 	rjmp  xmb_crc_nend
 #if (PROGMEM_SIZE > (64 * 1024))
-	cpse  r20,     r12
+	cpse  r13,     r12
 	rjmp  xmb_crc_nend
 #endif
 
@@ -257,7 +270,7 @@ xmb_crc_dlp:
 	clr   ZL
 	clr   ZH
 #if (PROGMEM_SIZE > (64 * 1024))
-	clr   r20
+	clr   r13
 #endif
 
 xmb_crc_nend:
@@ -269,15 +282,15 @@ xmb_crc_nend:
 	st    X+,      ZL      ; Low
 	st    X+,      ZH      ; High
 #if (PROGMEM_SIZE > (64 * 1024))
-	st    X+,      r20     ; Extended
+	st    X+,      r13     ; Extended
 #endif
 	com   ZL
 	st    X+,      ZL      ; Negated Low
 	com   ZH
 	st    X+,      ZH      ; Negated High
 #if (PROGMEM_SIZE > (64 * 1024))
-	com   r20
-	st    X+,      r20     ; Negated Extended
+	com   r13
+	st    X+,      r13     ; Negated Extended
 #endif
 
 	; Save CRC value
@@ -406,10 +419,15 @@ xmb_crc_isromok:
 	ldi   ZH,      hi8(XMB_BSIZE)
 #if (PROGMEM_SIZE > (64 * 1024))
 	ldi   r20,     hh8(XMB_BSIZE)
+	clr   r1
+	in    r0,      SR_IO   ; Save current SREG with whatever 'I' flag it has
+	cli                    ; Disable interrupts
 	out   RPZ_IO,  r20
 	elpm  r18,     Z+
 	elpm  r19,     Z+
 	elpm  r20,     Z
+	out   RPZ_IO,  r1
+	out   SR_IO,   r0      ; Enable interrupts (if they were disabled)
 #else
 	lpm   r18,     Z+
 	lpm   r19,     Z
@@ -420,7 +438,12 @@ xmb_crc_isromok:
 	ldi   ZL,      0
 	ldi   ZH,      0
 #if (PROGMEM_SIZE > (64 * 1024))
-	out   RPZ_IO,  ZH
+	push  r15
+	push  r16
+	push  r17
+	in    r15,     SR_IO   ; Save current SREG with whatever 'I' flag it has
+	ldi   r16,     0
+	ldi   r17,     0
 #endif
 
 	; Start CRC value (0xFFFFFFFF)
@@ -429,7 +452,7 @@ xmb_crc_isromok:
 	ldi   r23,     0xFF
 	movw  r24,     r22
 
-	; Prepare & run calculation loop (32 cycles / byte)
+	; Prepare & run calculation loop (32 cycles / byte if <= 64K)
 
 	ldi   r21,     4       ; For multiplying by four
 
@@ -437,13 +460,23 @@ xmb_crc_isromok_l:
 
 #if (PROGMEM_SIZE > (64 * 1024))
 #if (XMB_CRC_SPLIT == 0)
+	cli                    ; Disable interrupts
+	out   RPZ_IO,  r16
 	elpm  r0,      Z+
+	in    r16,     RPZ_IO
+	out   RPZ_IO,  r17
+	out   SR_IO,   r15     ; Enable interrupts (if they were disabled)
 #else
-	in    XL,      RPZ_IO  ; Split CRC calculation:
-	elpm  r0,      Z+      ; Call xmb_run after each 64K
-	in    XH,      RPZ_IO  ; (this can be used when a watchdog's timeout
-	cpse  XL,      XH      ; wouldn't permit running the whole CRC
-	call  xmb_run          ; calculation in a single block of operations)
+	mov   XL,      r16
+	cli                    ; Disable interrupts
+	out   RPZ_IO,  r16
+	elpm  r0,      Z+
+	in    r16,     RPZ_IO
+	out   RPZ_IO,  r17
+	out   SR_IO,   r15     ; Enable interrupts (if they were disabled)
+	cpse  XL,      r16     ; When passing a 64K boundary, call xmb_run
+	rjmp  xmb_crc_isromok_rc
+xmb_crc_isromok_rcr:
 #endif
 #else
 	lpm   r0,      Z+
@@ -470,9 +503,11 @@ xmb_crc_isromok_l:
 	cpse  ZH,      r19
 	rjmp  xmb_crc_isromok_l
 #if (PROGMEM_SIZE > (64 * 1024))
-	in    r0,      RPZ_IO
-	cpse  r0,      r20
+	cpse  r16,     r20
 	rjmp  xmb_crc_isromok_l
+	pop   r17
+	pop   r16
+	pop   r15
 #endif
 
 	clr   r1
@@ -490,6 +525,35 @@ xmb_crc_isok_tail:
 	brne  .+2
 	ldi   r24,     1       ; Resulted zero: CRC is correct
 	ret
+
+#if ((PROGMEM_SIZE > (64 * 1024)) && (XMB_CRC_SPLIT != 0))
+xmb_crc_isromok_rc:
+
+	; Call xmb_run with proper register save & restore
+
+	push  r18
+	push  r19
+	push  r20
+	push  r21
+	push  r22
+	push  r23
+	push  r24
+	push  r25
+	push  ZL
+	push  ZH
+	call  xmb_run
+	pop   ZH
+	pop   ZL
+	pop   r25
+	pop   r24
+	pop   r23
+	pop   r22
+	pop   r21
+	pop   r20
+	pop   r19
+	pop   r18
+	rjmp  xmb_crc_isromok_rcr
+#endif
 
 
 
